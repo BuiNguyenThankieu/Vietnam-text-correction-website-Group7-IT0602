@@ -55,20 +55,21 @@
 .card-side::before {
     position: absolute;
     content: 'Log in';
-    left: -120px; /* Tăng khoảng cách ra xa */
+    left: -150px; /* Tăng khoảng cách ra xa */
     top: 0;
     width: 100px;
     text-decoration: underline;
     color: var(--font-color);
-    font-weight: 600;
+    font-weight: 400;
 }
 
 .card-side::after {
     position: absolute;
     content: 'Sign up';
-    left: 120px; /* Tăng khoảng cách ra xa */
+    left: 90px; /* Điều chỉnh khoảng cách ra xa */
     top: 0;
-    width: 100px;
+    width: auto; /* Đảm bảo chiều rộng tự động điều chỉnh theo nội dung */
+    white-space: nowrap; /* Ngăn xuống dòng */
     text-decoration: none;
     color: var(--font-color);
     font-weight: 600;
