@@ -4,24 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vietnam Text Correction Website</title>
+    <link rel="stylesheet" href="https://cdn.quilljs.com/1.3.6/quill.snow.css">
     <link rel="stylesheet" href="/CSS/index.css">
 </head>
 <body>
 
-    <div class="container">
-        <div class="header">
-            <h1>Vietnam Text Correction Website</h1>
-            <div>
-                <button onclick="window.location.href='login.html'">Login</button>
-                <button onclick="window.location.href='signup.html'">Sign Up</button>
-            </div>
+    <!-- Vùng chứa phần tiêu đề và các nút -->
+    <div class="header-top">
+        <h1>Vietnam Text Correction Website</h1>
+        <div class="btn-group">
+            <button onclick="window.location.href='login.html'">Login</button>
+            <button onclick="window.location.href='signup.html'">Sign Up</button>
         </div>
+    </div>
 
+    <!-- Nội dung chính của trang -->
+    <div class="container">
         <div class="input-section">
             <p>Text input: 5 times left</p>
-            <textarea placeholder="Enter text (max 200 characters)" maxlength="200"></textarea>
-            <div class="button-section">
-                <button>Submit</button>
+
+            <!-- Trình soạn thảo văn bản -->
+            <div id="editor-container"></div>
+
+            <div class="btn-section">
+                <button onclick="submitText()">Submit</button>
             </div>
         </div>
 
@@ -33,6 +39,31 @@
             <p>Footer</p>
         </div>
     </div>
+
+    <!-- Quill JS -->
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script>
+        var quill = new Quill('#editor-container', {
+            theme: 'snow', // Theme for the editor
+            placeholder: 'Enter text (max 200 characters)',
+            modules: {
+                toolbar: [
+                    [{ 'font': [] }, { 'size': [] }],
+                    ['bold', 'italic', 'underline'],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    [{ 'align': [] }],
+                    ['clean']
+                ]
+            }
+        });
+
+        // Example function to handle text submission
+        function submitText() {
+            var text = quill.getText(); // Get plain text
+            console.log(text);
+            alert("Submitted text: " + text);
+        }
+    </script>
 
 </body>
 </html>
