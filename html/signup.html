@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/login&signup.css"> 
+</head>
+<body>
+    <div class="header-top">
+        <h1>Vietnam Text Correction Website</h1>
+     </div>
+     <div class="wrapper">
+        <div class="card-switch">
+           <label class="switch">
+              <label class="switch">
+                 <div class="flip-card__front">
+                       <div class="title">Sign up</div>
+                       <form class="flip-card__form" action="../php/register.php" method="POST">
+                          <input class="flip-card__input" name="username" placeholder="Name" type="text" required>
+                          <input class="flip-card__input" name="email" placeholder="Email" type="email" required>
+                          <input class="flip-card__input" name="password" placeholder="Password" type="password" required>
+                          <button class="flip-card__btn" type="submit">Confirm!</button>
+                      </form>
+                      <div class="link-container">
+                        <a href="login.html">Log in</a> | <a href="guest.html">Continue as Guest</a>
+                    </div>                                                
+                    </div>
+                 </div>
+              </label>
+          </div>   
+     </div>
+</body>
+</html>
