@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Management - Admin</title>
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+
+    <!-- Vùng chứa phần tiêu đề và nút -->
+    <div class="header-top">
+        <h1>Vietnam Text Correction Website</h1>
+        <div class="btn-group">
+            <button onclick="window.location.href='index.html'">Logout</button>
+        </div>
+    </div>
+
+    <!-- Nội dung chính của trang -->
+    <div class="container">
+        <div class="input-section">
+            <h2>Account Management</h2>
+
+            <div class="table-section">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        include '../php/db_connection.php';
+
+                        // Truy vấn danh sách người dùng, chỉ lấy username và email
+                        $sql = "SELECT id, username, email FROM users";
+                        $result = $conn->query($sql);
+
+                        if ($result->num_rows > 0) {
+                            // Hiển thị từng người dùng trong bảng
+                            while($row = $result->fetch_assoc()) {
+                                echo "<tr>";
+                                echo "<td>" . $row["username"] . "</td>";
+                                echo "<td>" . $row["email"] . "</td>";
+                                echo "<td><button class='delete-btn' onclick=\"deleteUser(" . $row['id'] . ")\">Delete</button></td>";
+
+                                echo "</tr>";
+                            }
+                        } else {
+                            echo "<tr><td colspan='3'>No users found</td></tr>";
+                        }
+
+                        $conn->close();
+                        ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="footer">
+            <button class="delete-all-btn">Delete All</button>
+        </div>
+    </div>
+
+    <script>
+        function deleteUser(id) {
+            if (confirm('Are you sure you want to delete this user?')) {
+                window.location.href = '../php/delete_user.php?id=' + id;
+            }
+        }
+    </script>
+
+</body>
+</html>
