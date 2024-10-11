@@ -21,16 +21,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Đăng nhập thành công
             $_SESSION['loggedin'] = true;
             $_SESSION['username'] = $user['username'];
-            echo "Login successful!";
-            header("Location: ../html/userlogined.html"); // Điều hướng sau khi đăng nhập thành công
+            echo "<script>
+                    alert('Login successful!');
+                    window.location.href = '../html/userlogined.html'; // Điều hướng sau khi đăng nhập thành công
+                  </script>";
             exit;
         } else {
             // Mật khẩu không đúng
-            echo "Invalid password!";
+            echo "<script>alert('Invalid password!');</script>";
         }
     } else {
         // Không tìm thấy tài khoản
-        echo "No account found with that username or email!";
+        echo "<script>alert('No account found with that username or email!');</script>";
     }
 
     $stmt->close();
