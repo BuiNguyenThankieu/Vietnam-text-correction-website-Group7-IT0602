@@ -1,5 +1,5 @@
 <?php
-include 'db_connection.php'; // Kiểm tra lại đường dẫn
+include 'db_connection.php'; 
 
 // Bật hiển thị lỗi
 ini_set('display_errors', 1);
