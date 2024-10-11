@@ -1,5 +1,5 @@
 <?php
-include 'db_connection.php'; 
+include 'db_connection.php'; // Kiểm tra lại đường dẫn
 
 // Bật hiển thị lỗi
 ini_set('display_errors', 1);
@@ -14,7 +14,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Kiểm tra nếu các trường đều có dữ liệu
     if (empty($username) || empty($email) || empty($password)) {
-        echo "All fields are required!";
+        echo "<script>alert('All fields are required!');</script>";
+        exit;
+    }
+
+    // Kiểm tra nếu username chỉ có số (không chấp nhận)
+    if (preg_match('/^[0-9]+$/', $username)) {
+        echo "<script>alert('Username cannot be only numbers!');
+        window.location.href = '../html/signup.html';
+        </script>";
         exit;
     }
 
@@ -27,7 +35,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($result->num_rows > 0) {
         // Tài khoản đã tồn tại
-        echo "Username or Email already exists!";
+        echo "<script>alert('Username or Email already exists!')
+        window.location.href = '../html/signup.html';
+        ;</script>";
     } else {
         // Mã hóa mật khẩu và lưu vào cơ sở dữ liệu
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
@@ -39,7 +49,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Đăng ký thành công
             echo "<script>
                     alert('Registration successful! Please log in.');
-                    window.location.href = '../html/login.html'; // Điều hướng về trang login sau khi đăng ký thành công
+                    window.location.href = '../html/login.html'; //
                   </script>";
             exit();
         } else {

@@ -1,5 +1,5 @@
 <?php
-include 'db_connection.php';
+include '../php/db_connection.php';
 session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -23,12 +23,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['username'] = $user['username'];
             echo "<script>
                     alert('Login successful!');
-                    window.location.href = '../html/userlogined.html'; // Điều hướng sau khi đăng nhập thành công
+                    window.location.href = '../html/userlogined.html'; 
                   </script>";
             exit;
         } else {
             // Mật khẩu không đúng
-            echo "<script>alert('Invalid password!');</script>";
+            echo "<script>alert('Invalid password!');
+            window.location.href = '../html/login.html';
+            </script>";
+             
         }
     } else {
         // Không tìm thấy tài khoản
