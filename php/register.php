@@ -39,8 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Đăng ký thành công
             echo "<script>
                     alert('Registration successful! Please log in.');
-                    window.location.href = '../html/login&signup.html'; // Điều hướng về cùng trang đăng ký/đăng nhập
-                    document.querySelector('.toggle').checked = true; // Chuyển sang phần đăng nhập
+                    window.location.href = '../html/login.html'; // Điều hướng về trang login sau khi đăng ký thành công
                   </script>";
             exit();
         } else {
