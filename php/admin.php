@@ -64,12 +64,92 @@ $conn->close();
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Account Management - Admin</title>
     <link rel="stylesheet" href="../css/admin.css">
+    <style>
+        /* Modal styles */
+        .modal {
+            display: none;
+            /* Mặc định ẩn modal */
+            position: fixed;
+            z-index: 1000;
+            /* Đảm bảo modal ở trên các phần tử khác */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            /* Kích hoạt cuộn khi nội dung quá dài */
+            background-color: rgba(0, 0, 0, 0.5);
+            /* Hiệu ứng mờ nền */
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            /* Đặt modal cách đều ở giữa màn hình */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            /* Chiều rộng modal */
+            max-width: 500px;
+            /* Chiều rộng tối đa */
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            /* Hiệu ứng đổ bóng */
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+            color: #333;
+        }
+
+        .modal-body {
+            margin-top: 20px;
+        }
+
+        .modal-footer {
+            text-align: right;
+            padding-top: 10px;
+            border-top: 1px solid #ddd;
+        }
+
+        .save-btn,
+        .cancel-btn {
+            padding: 10px 20px;
+            margin: 5px;
+            background-color: #ff612d;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .cancel-btn {
+            background-color: #ccc;
+        }
+
+        .save-btn:hover {
+            background-color: #ff4b0d;
+        }
+
+        .cancel-btn:hover {
+            background-color: #aaa;
+        }
+
+        /* Hiển thị modal */
+        .show-modal {
+            display: block;
+        }
+    </style>
 </head>
+
 <body>
 
     <!-- Vùng chứa phần tiêu đề và nút -->
@@ -108,7 +188,9 @@ $conn->close();
                                 </tr>
                             <?php endforeach; ?>
                         <?php else : ?>
-                            <tr><td colspan="3">No users found</td></tr>
+                            <tr>
+                                <td colspan="3">No users found</td>
+                            </tr>
                         <?php endif; ?>
                     </tbody>
                 </table>
@@ -140,7 +222,7 @@ $conn->close();
                 <button type="submit" class="save-btn">Save</button>
                 <button type="button" class="cancel-btn" onclick="hideEditForm()">Cancel</button>
             </div>
-                </form>
+            </form>
         </div>
     </div>
 
@@ -154,7 +236,7 @@ $conn->close();
 
         // Hiển thị modal chỉnh sửa
         function editUser(id) {
-            var row = document.querySelector('tr[data-id="'+id+'"]');
+            var row = document.querySelector('tr[data-id="' + id + '"]');
             var username = row.querySelector('td:nth-child(1)').textContent;
             var email = row.querySelector('td:nth-child(2)').textContent;
 
@@ -181,7 +263,7 @@ $conn->close();
                 event.preventDefault();
                 return false;
             } else {
-                document.getElementById('username-error').textContent = ''; 
+                document.getElementById('username-error').textContent = '';
             }
 
             var emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
@@ -190,9 +272,10 @@ $conn->close();
                 event.preventDefault();
                 return false;
             } else {
-                document.getElementById('email-error').textContent = ''; 
+                document.getElementById('email-error').textContent = '';
             }
         });
     </script>
 </body>
+
 </html>
