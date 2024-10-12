@@ -1,10 +1,19 @@
 <?php
-include '../php/db_connection.php';
+include 'db_connection.php';
 session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = trim($_POST['username']);
     $password = trim($_POST['password']);
+
+    // Kiểm tra nếu tài khoản là admin
+    if ($username === "admin" && $password === "admin123") {
+        // Thiết lập phiên đăng nhập cho admin
+        $_SESSION['loggedin'] = true;
+        $_SESSION['username'] = "admin";
+        header("Location: ../html/admin.html"); // Điều hướng đến trang admin
+        exit();
+    }
 
     // Tìm người dùng theo username hoặc email
     $sql = "SELECT * FROM users WHERE username = ? OR email = ?";
@@ -15,27 +24,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($result->num_rows == 1) {
         $user = $result->fetch_assoc();
-        
+
         // Kiểm tra mật khẩu
         if (password_verify($password, $user['password'])) {
-            // Đăng nhập thành công
+            // Đăng nhập thành công cho người dùng thông thường
             $_SESSION['loggedin'] = true;
             $_SESSION['username'] = $user['username'];
-            echo "<script>
-                    alert('Login successful!');
-                    window.location.href = '../html/userlogined.html'; 
-                  </script>";
-            exit;
+            header("Location: ../html/userlogined.html"); // Điều hướng đến trang người dùng
+            exit();
         } else {
             // Mật khẩu không đúng
-            echo "<script>alert('Invalid password!');
-            window.location.href = '../html/login.html';
-            </script>";
-             
+            echo "Invalid password!";
         }
     } else {
         // Không tìm thấy tài khoản
-        echo "<script>alert('No account found with that username or email!');</script>";
+        echo "No account found with that username or email!";
     }
 
     $stmt->close();
