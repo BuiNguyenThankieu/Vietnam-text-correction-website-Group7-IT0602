@@ -1,3 +1,67 @@
+<?php
+// Kết nối đến cơ sở dữ liệu
+include 'db_connection.php';
+
+// Xử lý khi có yêu cầu xóa user
+if (isset($_GET['delete_id'])) {
+    $userId = $_GET['delete_id'];
+
+    // Thực hiện xóa user
+    $sql = "DELETE FROM users WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $userId);
+    if ($stmt->execute()) {
+        header("Location: admin.php"); // Reload lại trang sau khi xóa
+        exit();
+    } else {
+        echo "Error deleting user: " . $conn->error;
+    }
+    $stmt->close();
+}
+
+// Xử lý khi có yêu cầu chỉnh sửa user
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['edit_id'])) {
+    $userId = $_POST['edit_id'];
+    $username = $_POST['username'];
+    $email = $_POST['email'];
+
+    // Kiểm tra điều kiện username và email trước khi lưu
+    $usernameRegex = '/^(?!\d+$)[a-zA-Z0-9]+$/';
+    $emailRegex = '/^[a-zA-Z0-9._%+-]+@gmail\.com$/';
+
+    if (preg_match($usernameRegex, $username) && preg_match($emailRegex, $email)) {
+        // Thực hiện cập nhật user
+        $sql = "UPDATE users SET username = ?, email = ? WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ssi", $username, $email, $userId);
+
+        if ($stmt->execute()) {
+            header("Location: admin.php"); // Reload lại trang sau khi lưu
+            exit();
+        } else {
+            echo "Error updating user: " . $conn->error;
+        }
+
+        $stmt->close();
+    } else {
+        echo "Invalid username or email format!";
+    }
+}
+
+// Truy vấn danh sách người dùng
+$sql = "SELECT id, username, email FROM users";
+$result = $conn->query($sql);
+
+$users = [];
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $users[] = $row;
+    }
+}
+
+$conn->close();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -100,12 +164,12 @@
             document.getElementById('username').value = username;
             document.getElementById('email').value = email;
 
-            document.getElementById('edit-modal').style.display = 'block';
+            document.getElementById('edit-modal').classList.add('show-modal');
         }
 
         // Ẩn modal chỉnh sửa
         function hideEditForm() {
-            document.getElementById('edit-modal').style.display = 'none';
+            document.getElementById('edit-modal').classList.remove('show-modal');
         }
 
         // Kiểm tra username và email trước khi gửi form
