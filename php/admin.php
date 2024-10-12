@@ -132,11 +132,9 @@ $conn->close();
                     <label for="username">Username:</label>
                     <input type="text" id="username" name="username" required>
                     <div class="error-message" id="username-error"></div>
-                    <br><br>
                     <label for="email">Email:</label>
                     <input type="email" id="email" name="email" required>
                     <div class="error-message" id="email-error"></div>
-                    <br><br>
             </div>
             <div class="modal-footer">
                 <button type="submit" class="save-btn">Save</button>
