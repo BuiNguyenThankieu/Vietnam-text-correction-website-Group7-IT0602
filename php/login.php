@@ -11,7 +11,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Thiết lập phiên đăng nhập cho admin
         $_SESSION['loggedin'] = true;
         $_SESSION['username'] = "admin";
-        header("Location: ../html/admin.html"); // Điều hướng đến trang admin
+        header("Location: admin.php"); 
         exit();
     }
 
