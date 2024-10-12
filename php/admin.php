@@ -1,5 +1,5 @@
 <?php
-include '../php/db_connection.php'; // Kết nối đến cơ sở dữ liệu
+include 'db_connection.php'; // Kết nối đến cơ sở dữ liệu
 
 // Xử lý khi có yêu cầu xóa user
 if (isset($_GET['delete_id'])) {
