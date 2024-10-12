@@ -1,17 +1,17 @@
 <?php
-include 'db_connection.php';
+include '../php/db_connection.php'; // Kết nối đến cơ sở dữ liệu
 
-// Xử lý khi có yêu cầu xóa người dùng
+// Xử lý khi có yêu cầu xóa user
 if (isset($_GET['delete_id'])) {
-    $user_id = $_GET['delete_id'];
+    $userId = $_GET['delete_id'];
 
-    // Xóa người dùng theo ID
+    // Truy vấn để xóa user
     $sql = "DELETE FROM users WHERE id = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $user_id);
-
+    $stmt->bind_param("i", $userId);
     if ($stmt->execute()) {
-        header("Location: ../html/admin.html"); // Sau khi xóa, quay lại trang admin
+        // Chuyển hướng lại trang admin sau khi xóa
+        header("Location: ../html/admin.html");
         exit();
     } else {
         echo "Error deleting user: " . $conn->error;
@@ -20,45 +20,46 @@ if (isset($_GET['delete_id'])) {
     $stmt->close();
 }
 
-// Xử lý khi có yêu cầu chỉnh sửa người dùng
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['edit_id'])) {
-    $user_id = $_POST['edit_id'];
-    $username = trim($_POST['username']);
-    $email = trim($_POST['email']);
-
-    // Cập nhật thông tin người dùng
-    $sql = "UPDATE users SET username = ?, email = ? WHERE id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssi", $username, $email, $user_id);
-
-    if ($stmt->execute()) {
-        header("Location: ../html/admin.html"); // Sau khi cập nhật, quay lại trang admin
-        exit();
-    } else {
-        echo "Error updating user: " . $stmt->error;
-    }
-
-    $stmt->close();
-}
-
-// Load danh sách người dùng và in ra bảng
+// Truy vấn danh sách người dùng
 $sql = "SELECT id, username, email FROM users";
 $result = $conn->query($sql);
 
+$users = [];
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-        echo "<tr data-id='" . $row['id'] . "'>";
-        echo "<td>" . htmlspecialchars($row['username']) . "</td>";
-        echo "<td>" . htmlspecialchars($row['email']) . "</td>";
-        echo "<td>
-                <button class='edit-btn' onclick=\"editUser(" . $row['id'] . ")\">Edit</button>
-                <button class='delete-btn' onclick=\"deleteUser(" . $row['id'] . ")\">Delete</button>
-              </td>";
-        echo "</tr>";
+        $users[] = $row;
     }
-} else {
-    echo "<tr><td colspan='3'>No users found</td></tr>";
 }
 
 $conn->close();
 ?>
+
+<script>
+    // Lưu danh sách người dùng từ PHP vào biến JavaScript
+    const users = <?php echo json_encode($users); ?>;
+
+    // Chèn dữ liệu người dùng vào bảng HTML trong admin.html
+    document.addEventListener('DOMContentLoaded', () => {
+        const tableBody = document.querySelector('tbody');
+
+        if (users.length > 0) {
+            users.forEach(user => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${user.username}</td>
+                    <td>${user.email}</td>
+                    <td><button class='delete-btn' onclick="deleteUser(${user.id})">Delete</button></td>
+                `;
+                tableBody.appendChild(row);
+            });
+        } else {
+            tableBody.innerHTML = '<tr><td colspan="3">No users found</td></tr>';
+        }
+    });
+
+    function deleteUser(id) {
+        if (confirm('Are you sure you want to delete this user?')) {
+            window.location.href = '../php/admin.php?delete_id=' + id;
+        }
+    }
+</script>
