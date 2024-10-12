@@ -120,22 +120,30 @@ $conn->close();
         </div>
     </div>
 
-    <!-- Form chỉnh sửa người dùng (ẩn mặc định, sẽ hiển thị khi chọn chỉnh sửa) -->
-    <div id="edit-form" style="display:none;">
-        <h2>Edit User</h2>
-        <form method="POST" action="admin.php">
-            <input type="hidden" id="edit_id" name="edit_id">
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required>
-            <div class="error-message" id="username-error"></div>
-            <br><br>
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
-            <div class="error-message" id="email-error"></div>
-            <br><br>
-            <button type="submit">Save</button>
-            <button type="button" onclick="hideEditForm()">Cancel</button>
-        </form>
+    <!-- Modal chỉnh sửa người dùng -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit User</h2>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="admin.php">
+                    <input type="hidden" id="edit_id" name="edit_id">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" required>
+                    <div class="error-message" id="username-error"></div>
+
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                    <div class="error-message" id="email-error"></div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="save-btn">Save</button>
+                        <button type="button" class="cancel-btn" onclick="hideEditForm()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -146,24 +154,24 @@ $conn->close();
             }
         }
 
-        // Hiển thị form chỉnh sửa
+        // Hiển thị modal chỉnh sửa người dùng
         function editUser(id) {
-            // Lấy dữ liệu người dùng theo ID (ví dụ: từ bảng)
             var row = document.querySelector('tr[data-id="'+id+'"]');
             var username = row.querySelector('td:nth-child(1)').textContent;
             var email = row.querySelector('td:nth-child(2)').textContent;
 
-            // Hiển thị form chỉnh sửa với dữ liệu người dùng
+            // Đặt giá trị vào form modal
             document.getElementById('edit_id').value = id;
             document.getElementById('username').value = username;
             document.getElementById('email').value = email;
 
-            document.getElementById('edit-form').style.display = 'block';
+            // Hiển thị modal
+            document.getElementById('edit-modal').classList.add('show-modal');
         }
 
-        // Ẩn form chỉnh sửa
+        // Ẩn modal chỉnh sửa
         function hideEditForm() {
-            document.getElementById('edit-form').style.display = 'none';
+            document.getElementById('edit-modal').classList.remove('show-modal');
         }
 
         // Kiểm tra username và email trước khi gửi form
@@ -171,24 +179,23 @@ $conn->close();
             var username = document.getElementById('username').value;
             var email = document.getElementById('email').value;
 
-            // Kiểm tra username: chỉ chứa chữ cái hoặc cả chữ và số, không chỉ chứa mỗi số
             var usernameRegex = /^(?!\d+$)[a-zA-Z0-9]+$/;
+            var emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+
             if (!usernameRegex.test(username)) {
-                document.getElementById('username-error').textContent = 'Username must contain only letters or both letters and numbers, but cannot be just numbers.';
+                document.getElementById('username-error').textContent = 'Username must contain letters or both letters and numbers, but cannot be just numbers.';
                 event.preventDefault();
                 return false;
             } else {
-                document.getElementById('username-error').textContent = ''; // Xóa thông báo lỗi nếu hợp lệ
+                document.getElementById('username-error').textContent = '';
             }
 
-            // Kiểm tra email: phải kết thúc bằng @gmail.com
-            var emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
             if (!emailRegex.test(email)) {
                 document.getElementById('email-error').textContent = 'Email must be a valid Gmail address ending with @gmail.com.';
                 event.preventDefault();
                 return false;
             } else {
-                document.getElementById('email-error').textContent = ''; // Xóa thông báo lỗi nếu hợp lệ
+                document.getElementById('email-error').textContent = '';
             }
         });
     </script>
