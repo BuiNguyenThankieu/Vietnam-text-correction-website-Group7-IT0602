@@ -72,81 +72,107 @@ $conn->close();
     <link rel="stylesheet" href="../css/admin.css">
     <style>
         /* Modal styles */
-        .modal {
-            display: none;
-            /* Mặc định ẩn modal */
-            position: fixed;
-            z-index: 1000;
-            /* Đảm bảo modal ở trên các phần tử khác */
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            /* Kích hoạt cuộn khi nội dung quá dài */
-            background-color: rgba(0, 0, 0, 0.5);
-            /* Hiệu ứng mờ nền */
-        }
+.modal {
+    display: none;
+    /* Mặc định ẩn modal */
+    position: fixed;
+    z-index: 1000;
+    /* Đảm bảo modal ở trên các phần tử khác */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    /* Kích hoạt cuộn khi nội dung quá dài */
+    background-color: rgba(0, 0, 0, 0.6);
+    /* Hiệu ứng mờ nền */
+}
 
-        .modal-content {
-            background-color: #fff;
-            margin: 15% auto;
-            /* Đặt modal cách đều ở giữa màn hình */
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            /* Chiều rộng modal */
-            max-width: 500px;
-            /* Chiều rộng tối đa */
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            /* Hiệu ứng đổ bóng */
-        }
+.modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    /* Đặt modal cách đều ở giữa màn hình */
+    padding: 20px 30px;
+    border-radius: 10px;
+    /* Thêm bo tròn */
+    width: 80%;
+    max-width: 400px;
+    /* Giới hạn chiều rộng tối đa */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    /* Hiệu ứng đổ bóng */
+}
 
-        .modal-header h2 {
-            margin: 0;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #ddd;
-            color: #333;
-        }
+.modal-header h2 {
+    margin: 0;
+    padding-bottom: 15px;
+    font-size: 22px;
+    font-weight: bold;
+    border-bottom: 2px solid #eee;
+    color: #333;
+}
 
-        .modal-body {
-            margin-top: 20px;
-        }
+.modal-body {
+    margin-top: 20px;
+}
 
-        .modal-footer {
-            text-align: right;
-            padding-top: 10px;
-            border-top: 1px solid #ddd;
-        }
+.modal-body label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 16px;
+    color: #333;
+}
 
-        .save-btn,
-        .cancel-btn {
-            padding: 10px 20px;
-            margin: 5px;
-            background-color: #ff612d;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+.modal-body input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
 
-        .cancel-btn {
-            background-color: #ccc;
-        }
+.modal-footer {
+    text-align: right;
+    padding-top: 10px;
+    border-top: 1px solid #ddd;
+}
 
-        .save-btn:hover {
-            background-color: #ff4b0d;
-        }
+.save-btn, .cancel-btn {
+    padding: 10px 20px;
+    margin-left: 10px;
+    font-size: 14px;
+    background-color: #ff612d;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
 
-        .cancel-btn:hover {
-            background-color: #aaa;
-        }
+.save-btn:hover {
+    background-color: #ff4b0d;
+}
 
-        /* Hiển thị modal */
-        .show-modal {
-            display: block;
-        }
+.cancel-btn {
+    background-color: #ccc;
+}
+
+.cancel-btn:hover {
+    background-color: #aaa;
+}
+
+.error-message {
+    color: red;
+    font-size: 12px;
+    margin-bottom: 10px;
+}
+
+/* Hiển thị modal */
+.show-modal {
+    display: block;
+}
+
     </style>
 </head>
 
