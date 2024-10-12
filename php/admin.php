@@ -132,17 +132,17 @@ $conn->close();
                     <label for="username">Username:</label>
                     <input type="text" id="username" name="username" required>
                     <div class="error-message" id="username-error"></div>
-
+                    <br><br>
                     <label for="email">Email:</label>
                     <input type="email" id="email" name="email" required>
                     <div class="error-message" id="email-error"></div>
-
-                    <div class="modal-footer">
-                        <button type="submit" class="save-btn">Save</button>
-                        <button type="button" class="cancel-btn" onclick="hideEditForm()">Cancel</button>
-                    </div>
-                </form>
+                    <br><br>
             </div>
+            <div class="modal-footer">
+                <button type="submit" class="save-btn">Save</button>
+                <button type="button" class="cancel-btn" onclick="hideEditForm()">Cancel</button>
+            </div>
+                </form>
         </div>
     </div>
 
@@ -154,18 +154,16 @@ $conn->close();
             }
         }
 
-        // Hiển thị modal chỉnh sửa người dùng
+        // Hiển thị modal chỉnh sửa
         function editUser(id) {
             var row = document.querySelector('tr[data-id="'+id+'"]');
             var username = row.querySelector('td:nth-child(1)').textContent;
             var email = row.querySelector('td:nth-child(2)').textContent;
 
-            // Đặt giá trị vào form modal
             document.getElementById('edit_id').value = id;
             document.getElementById('username').value = username;
             document.getElementById('email').value = email;
 
-            // Hiển thị modal
             document.getElementById('edit-modal').classList.add('show-modal');
         }
 
@@ -180,22 +178,21 @@ $conn->close();
             var email = document.getElementById('email').value;
 
             var usernameRegex = /^(?!\d+$)[a-zA-Z0-9]+$/;
-            var emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
-
             if (!usernameRegex.test(username)) {
-                document.getElementById('username-error').textContent = 'Username must contain letters or both letters and numbers, but cannot be just numbers.';
+                document.getElementById('username-error').textContent = 'Username must contain only letters or both letters and numbers, but cannot be just numbers.';
                 event.preventDefault();
                 return false;
             } else {
-                document.getElementById('username-error').textContent = '';
+                document.getElementById('username-error').textContent = ''; 
             }
 
+            var emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
             if (!emailRegex.test(email)) {
                 document.getElementById('email-error').textContent = 'Email must be a valid Gmail address ending with @gmail.com.';
                 event.preventDefault();
                 return false;
             } else {
-                document.getElementById('email-error').textContent = '';
+                document.getElementById('email-error').textContent = ''; 
             }
         });
     </script>
