@@ -40,148 +40,7 @@ body {
     font-size: 17px;
     font-weight: 600;
     color: var(white);
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-    
-    body {
-        font-family: Arial, sans-serif;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        height: 100vh;
-        background-color: #ffbba4f5;
-        justify-content: flex-start;
-    }
-    
-    .header-top {
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 20px;
-        background-color: #ff612df5;
-        color: white;
-    }
-    
-    .header-top h1 {
-        font-size: 24px;
-        margin: 0;
-    }
-    
-    .btn-group button {
-        padding: 10px 20px;
-        margin-left: 10px;
-        background-color: white;
-        color: #8fff2df5;
-        border-radius: 5px;
-        border: 2px solid var(black);
-        box-shadow: 4px 4px var(black);
-        font-size: 17px;
-        font-weight: 600;
-        color: var(white);
-        cursor: pointer;
-    }
-    
-    .container {
-        width: 100%;
-        max-width: 1200px;
-        background-color: white;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        padding: 20px;
-        margin-top: 20px;
-    }
-    
-    .input-section h2 {
-        margin-bottom: 20px;
-    }
-    
-    .table-section {
-        width: 100%;
-    }
-    
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-    
-    table th, table td {
-        padding: 15px;
-        text-align: left;
-        border-bottom: 1px solid #ddd;
-    }
-    
-    table th {
-        background-color: #ff612df5;
-        color: white;
-    }
-    
-    table td a {
-        color: #007bff;
-        text-decoration: none;
-    }
-    
-    table td a:hover {
-        text-decoration: underline;
-    }
-    
-    table td {
-        font-size: 14px;
-    }
-    
-    table td:last-child {
-        width: 150px; /* Giới hạn chiều rộng của cột Action */
-        text-align: center;
-    }
-    
-    button {
-        padding: 10px 20px;
-        margin-left: 10px;
-        background-color: #ffc392; /* Màu nền ban đầu */
-        color: white;
-        border-radius: 5px;
-        border: none;
-        cursor: pointer;
-        font-size: 17px;
-        font-weight: 600;
-    }
-    
-    /* Khi hover vào nút */
-    button:hover {
-        background-color: #ffc392; /* Màu nền sáng hơn để tạo tương phản với header */
-        color: white; /* Giữ màu chữ rõ ràng */
-    }
-    
-    
-    
-    .delete-btn {
-        background-color: #ff4b4b;
-    }
-    
-    .footer {
-        margin-top: 30px;
-        text-align: center;
-        font-size: 12px;
-        color: #777;
-    }
-    
-    .delete-all-btn {
-        padding: 10px 20px;
-        background-color: #ff4b4b;
-        color: white;
-        border: none;
-        cursor: pointer;
-        border-radius: 5px;
-    }
-    
-    .delete-all-btn:hover {
-        background-color: #d84343;
-    }
-    
+    cursor: pointer;
 }
 
 .container {
@@ -275,87 +134,70 @@ button:hover {
     background-color: #d84343;
 }
 
-/* Modal Styling */
+/* Modal styles */
 .modal {
-    display: none; /* Ẩn modal mặc định */
-    position: fixed; /* Hiển thị ở giữa màn hình */
-    z-index: 999; /* Hiển thị trên các phần tử khác */
+    display: none; /* Mặc định ẩn modal */
+    position: fixed; 
+    z-index: 1000; /* Đảm bảo modal ở trên các phần tử khác */
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Màu nền mờ */
-    justify-content: center;
-    align-items: center;
+    overflow: auto; /* Kích hoạt cuộn khi nội dung quá dài */
+    background-color: rgba(0, 0, 0, 0.5); /* Hiệu ứng mờ nền */
 }
 
 .modal-content {
     background-color: #fff;
+    margin: 15% auto; /* Đặt modal cách đều ở giữa màn hình */
     padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Chiều rộng modal */
+    max-width: 500px; /* Chiều rộng tối đa */
     border-radius: 8px;
-    width: 400px;
-    max-width: 90%;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    animation: showModal 0.3s ease;
-}
-
-@keyframes showModal {
-    from { transform: scale(0.9); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Hiệu ứng đổ bóng */
 }
 
 .modal-header h2 {
     margin: 0;
-    font-size: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #ddd;
     color: #333;
-    text-align: center;
 }
 
 .modal-body {
-    margin: 20px 0;
-}
-
-.modal-body label {
-    display: block;
-    margin-bottom: 8px;
-    color: #333;
-    font-weight: bold;
-}
-
-.modal-body input[type="text"],
-.modal-body input[type="email"] {
-    width: calc(100% - 20px);
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+    margin-top: 20px;
 }
 
 .modal-footer {
-    display: flex;
-    justify-content: flex-end;
+    text-align: right;
+    padding-top: 10px;
+    border-top: 1px solid #ddd;
 }
 
-.modal-footer button {
+.save-btn, .cancel-btn {
     padding: 10px 20px;
+    margin: 5px;
+    background-color: #ff612d;
+    color: white;
     border: none;
     border-radius: 5px;
-    margin-left: 10px;
     cursor: pointer;
-    font-size: 14px;
-}
-
-.save-btn {
-    background-color: #28a745;
-    color: white;
 }
 
 .cancel-btn {
-    background-color: #ff4b4b;
-    color: white;
+    background-color: #ccc;
 }
 
-/* Khi modal hiển thị */
+.save-btn:hover {
+    background-color: #ff4b0d;
+}
+
+.cancel-btn:hover {
+    background-color: #aaa;
+}
+
+/* Hiển thị modal */
 .show-modal {
-    display: flex;
+    display: block;
 }
