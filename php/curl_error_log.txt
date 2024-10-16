@@ -44,5 +44,4 @@ Content-Length: 88
 < server: cloudflare
 < cf-ray: 8d305c890f2d8b6b-HKG
 < alt-svc: h3=":443"; ma=86400
-< 
 * Connection #0 to host api.openai.com left intact
