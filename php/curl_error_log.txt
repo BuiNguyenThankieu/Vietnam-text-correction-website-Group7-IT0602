@@ -1,0 +1,48 @@
+*   Trying 172.66.0.243:443...
+* Connected to api.openai.com (172.66.0.243) port 443
+* ALPN: curl offers h2,http/1.1
+*  CAfile: D:\XAMPP\apache\bin\curl-ca-bundle.crt
+*  CApath: none
+* SSL connection using TLSv1.3 / TLS_AES_256_GCM_SHA384
+* ALPN: server accepted h2
+* Server certificate:
+*  subject: CN=api.openai.com
+*  start date: Sep 26 22:25:05 2024 GMT
+*  expire date: Dec 25 23:25:00 2024 GMT
+*  subjectAltName: host "api.openai.com" matched cert's "api.openai.com"
+*  issuer: C=US; O=Google Trust Services; CN=WE1
+*  SSL certificate verify ok.
+* using HTTP/2
+* [HTTP/2] [1] OPENED stream for https://api.openai.com/v1/completions
+* [HTTP/2] [1] [:method: POST]
+* [HTTP/2] [1] [:scheme: https]
+* [HTTP/2] [1] [:authority: api.openai.com]
+* [HTTP/2] [1] [:path: /v1/completions]
+* [HTTP/2] [1] [accept: */*]
+* [HTTP/2] [1] [content-type: application/json]
+* [HTTP/2] [1] [authorization: Bearer]
+* [HTTP/2] [1] [content-length: 88]
+> POST /v1/completions HTTP/2
+Host: api.openai.com
+Accept: */*
+Content-Type: application/json
+Authorization: Bearer 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
+Content-Length: 88
+
+* old SSL session ID is stale, removing
+< HTTP/2 404 
+< date: Tue, 15 Oct 2024 14:05:00 GMT
+< content-type: application/json; charset=utf-8
+< content-length: 258
+< vary: Origin
+< x-request-id: req_e9bf48ddd10f5cabd95993231e4d75f9
+< strict-transport-security: max-age=31536000; includeSubDomains; preload
+< cf-cache-status: DYNAMIC
+< set-cookie: __cf_bm=K8GFU7236ZvdcvDgzB_8JWU9Sv0pUqD793n6IaTusig-1729001100-1.0.1.1-xh3rFF.LspTM0drUWYMhhD24NzYxVpIPitfMIMRXy.5KzTAd3obDLNEkWSPE5l43dfKKJ7ubKu6jEkQuwrjatQ; path=/; expires=Tue, 15-Oct-24 14:35:00 GMT; domain=.api.openai.com; HttpOnly; Secure
+< x-content-type-options: nosniff
+< set-cookie: _cfuvid=5hFBR_rfE1_5eWDD70mWUgivMR1uifCoN_utEXFxE1M-1729001100114-0.0.1.1-604800000; path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None
+< server: cloudflare
+< cf-ray: 8d305c890f2d8b6b-HKG
+< alt-svc: h3=":443"; ma=86400
+< 
+* Connection #0 to host api.openai.com left intact
