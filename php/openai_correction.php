@@ -1,8 +1,8 @@
 <?php
 // API key cho OpenAI
-$api_key = 'my OpenAI API key'; 
+$api_key = ''; 
 
-// Lấy dữ liệu văn bản từ yêu cầu POST
+// Lấy dữ liệu văn bản từ yêu cầu POST  
 $text = $_POST['text'] ?? '';
 
 // Kiểm tra xem văn bản có rỗng hay không

@@ -6,6 +6,32 @@
     <title>Vietnam Text Correction Website - Logged In</title>
     <link rel="stylesheet" href="https://cdn.quilljs.com/1.3.6/quill.snow.css">
     <link rel="stylesheet" href="../css/userlogined.css">
+    <style>
+        /* Style cho các từ sai chính tả */
+        .incorrect {
+            color: red;
+            text-decoration: underline;
+        }
+
+        /* Style cho khung hiển thị lỗi chính tả */
+        .error-box {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            width: 100%;
+            height: auto;
+        }
+
+        .no-errors {
+            color: green;
+        }
+
+        .has-errors {
+            color: red;
+        }
+    </style>
 </head>
 <body>
 
@@ -30,6 +56,11 @@
             <textarea readonly id="corrected-text" placeholder="Corrected Text"></textarea>
         </div>
 
+        <!-- Khung hiển thị lỗi chính tả -->
+        <div class="error-box" id="error-box">
+            <!-- Sẽ hiển thị lỗi ở đây -->
+        </div>
+
         <div class="footer">
             
         </div>
@@ -40,7 +71,7 @@
     <script>
         var quill = new Quill('#editor-container', {
             theme: 'snow',
-            placeholder: 'Enter text ',
+            placeholder: 'Enter text...',
             modules: {
                 toolbar: [
                     [{ 'font': [] }, { 'size': [] }],
@@ -51,43 +82,79 @@
                 ]
             }
         });
-    
-        // Thêm sự kiện click cho nút Submit
-        document.getElementById('submit-btn').addEventListener('click', function() {
-            submitText();
-        });
-    
-        // Function to handle text submission
-        function submitText() {
-            var text = quill.getText().trim(); // Lấy văn bản đơn giản và loại bỏ khoảng trắng thừa
-            if (!text) {
-                alert('Please enter some text.');
-                return;
-            }
-    
-            // Gửi văn bản tới PHP để xử lý với OpenAI API
-            fetch('../php/openai_correction.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: new URLSearchParams({
-                    'text': text
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.choices) {
-                    document.getElementById('corrected-text').value = data.choices.trim();
-                } else {
-                    alert('There was an error with the correction.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while trying to connect to the API.');
-            });
+
+       // Thêm sự kiện click cho nút Submit
+document.getElementById('submit-btn').addEventListener('click', function() {
+    submitText();
+});
+
+// Function để đánh dấu các từ sai và hiển thị lỗi
+function highlightErrors(text, errors) {
+    // Split the text into words
+    var words = text.split(/\s+/);
+    var highlightedText = '';
+    var errorBox = document.getElementById('error-box');
+    var errorList = '';
+
+    // Loop through the words and highlight the incorrect ones
+    for (var i = 0; i < words.length; i++) {
+        if (errors.includes(words[i])) {
+            highlightedText += '<span class="incorrect">' + words[i] + '</span> ';
+            errorList += '<div>Sai chính tả: <strong>' + words[i] + '</strong></div>';
+        } else {
+            highlightedText += words[i] + ' ';
         }
+    }
+
+    // Show the highlighted text in the editor
+    quill.root.innerHTML = highlightedText.trim();
+
+    // Show the errors in the error box
+    if (errorList === '') {
+        errorBox.innerHTML = '<div class="no-errors">Không có lỗi chính tả</div>';
+    } else {
+        errorBox.innerHTML = '<div class="has-errors">' + errorList + '</div>';
+    }
+}
+
+// Function to handle text submission
+function submitText() {
+    var text = quill.getText().trim(); // Lấy văn bản đơn giản và loại bỏ khoảng trắng thừa
+
+    // Gửi văn bản tới PHP để xử lý với OpenAI API
+    fetch('../php/openai_correction.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            'text': text
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.choices) {
+            document.getElementById('corrected-text').value = data.choices.trim();
+            
+            // Cập nhật logic để lấy các từ bị sai chính tả từ kết quả API
+            // Trong ví dụ này, bạn cần có mảng errors từ API (thay thế bằng dữ liệu thực)
+            var errors = [];  // Đặt danh sách các từ sai chính tả lấy từ kết quả API
+            if (errors.length === 0) {
+                highlightErrors(text, errors);
+            } else {
+                highlightErrors(text, errors);  // Highlight từ sai chính tả
+            }
+        } else {
+            alert('There was an error with the correction.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while trying to connect to the API.');
+    });
+}
+
     </script>
+
 </body>
 </html>

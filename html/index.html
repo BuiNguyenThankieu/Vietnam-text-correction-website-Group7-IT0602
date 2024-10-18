@@ -21,7 +21,7 @@
     <!-- Nội dung chính của trang -->
     <div class="container">
         <div class="input-section">
-            <p>Text input: 5 times left</p>
+            <p>Text input: <span id="remaining-tries">5</span> times left</p>
 
             <!-- Trình soạn thảo văn bản -->
             <div id="editor-container"></div>
@@ -32,7 +32,7 @@
         </div>
 
         <div class="output-section">
-            <textarea readonly placeholder="Corrected Text"></textarea>
+            <textarea readonly id="corrected-text" placeholder="Corrected Text"></textarea>
         </div>
 
         <div class="footer">
@@ -45,7 +45,7 @@
     <script>
         var quill = new Quill('#editor-container', {
             theme: 'snow', // Theme for the editor
-            placeholder: 'Enter text (max 200 characters)',
+            placeholder: 'Enter text (max 200 words)',
             modules: {
                 toolbar: [
                     [{ 'font': [] }, { 'size': [] }],
@@ -57,11 +57,76 @@
             }
         });
 
-        // Example function to handle text submission
+        var maxEdits = 5;
+        var maxWords = 200;
+        
+        // Load number of remaining tries from localStorage
+        function loadRemainingTries() {
+            let tries = localStorage.getItem('remainingTries');
+            if (tries === null) {
+                tries = maxEdits;
+                localStorage.setItem('remainingTries', tries);
+            }
+            document.getElementById('remaining-tries').innerText = tries;
+            return tries;
+        }
+
+        // Decrease the remaining tries by 1 and save to localStorage
+        function decrementTries() {
+            let tries = loadRemainingTries();
+            tries--;
+            localStorage.setItem('remainingTries', tries);
+            document.getElementById('remaining-tries').innerText = tries;
+            return tries;
+        }
+
+        // Count the number of words in the input text
+        function countWords(text) {
+            return text.trim().split(/\s+/).length;
+        }
+
+        // Submit the text to the API
         function submitText() {
-            var text = quill.getText(); // Get plain text
-            console.log(text);
-            alert("Submitted text: " + text);
+            var text = quill.getText().trim(); // Get plain text
+            if (countWords(text) > maxWords) {
+                alert("Text exceeds the maximum word limit of " + maxWords + " words.");
+                return;
+            }
+
+            let remainingTries = loadRemainingTries();
+            if (remainingTries <= 0) {
+                alert("You've reached the maximum number of corrections for today. Please login or sign up.");
+                return;
+            }
+
+            // Gửi văn bản tới PHP để xử lý với OpenAI API
+            fetch('../php/openai_correction.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    'text': text
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.choices) {
+                    document.getElementById('corrected-text').value = data.choices.trim();
+                    remainingTries = decrementTries(); // Decrease tries on successful submission
+                } else {
+                    alert('There was an error with the correction.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while trying to connect to the API.');
+            });
+        }
+
+        // Initialize the remaining tries when the page loads
+        window.onload = function() {
+            loadRemainingTries();
         }
     </script>
 
