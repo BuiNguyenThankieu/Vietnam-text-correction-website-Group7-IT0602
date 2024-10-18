@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vietnam Text Correction Website</title>
     <link rel="stylesheet" href="https://cdn.quilljs.com/1.3.6/quill.snow.css">
     <link rel="stylesheet" href="../css/index.css">
-</head>
-<body>
 
-    <!-- Vùng chứa phần tiêu đề và các nút -->
     <div class="header-top">
         <h1>Vietnam Text Correction Website</h1>
         <div class="btn-group">
@@ -18,25 +16,31 @@
         </div>
     </div>
 
+</head>
+
+<body>
+
     <!-- Nội dung chính của trang -->
-    <div class="container">
-        <div class="input-section">
-            <p>Text input: <span id="remaining-tries">5</span> times left</p>
+    <div class="main-content">
+        <div class="container">
+            <div class="input-section">
+                <p>Text input: <span id="remaining-tries">5</span> times left</p>
 
-            <!-- Trình soạn thảo văn bản -->
-            <div id="editor-container"></div>
+                <!-- Trình soạn thảo văn bản -->
+                <div id="editor-container"></div>
 
-            <div class="btn-section">
-                <button onclick="submitText()">Submit</button>
+                <div class="btn-section">
+                    <button onclick="submitText()">Submit</button>
+                </div>
             </div>
-        </div>
 
-        <div class="output-section">
-            <textarea readonly id="corrected-text" placeholder="Corrected Text"></textarea>
-        </div>
+            <div class="output-section">
+                <textarea readonly id="corrected-text" placeholder="Corrected Text"></textarea>
+            </div>
 
-        <div class="footer">
-            <p>Footer</p>
+            <div class="footer">
+                <p>Footer</p>
+            </div>
         </div>
     </div>
 
@@ -50,7 +54,7 @@
                 toolbar: [
                     [{ 'font': [] }, { 'size': [] }],
                     ['bold', 'italic', 'underline'],
-                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
                     [{ 'align': [] }],
                     ['clean']
                 ]
@@ -59,7 +63,7 @@
 
         var maxEdits = 5;
         var maxWords = 200;
-        
+
         // Load number of remaining tries from localStorage
         function loadRemainingTries() {
             let tries = localStorage.getItem('remainingTries');
@@ -109,26 +113,27 @@
                     'text': text
                 })
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.choices) {
-                    document.getElementById('corrected-text').value = data.choices.trim();
-                    remainingTries = decrementTries(); // Decrease tries on successful submission
-                } else {
-                    alert('There was an error with the correction.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while trying to connect to the API.');
-            });
+                .then(response => response.json())
+                .then(data => {
+                    if (data.choices) {
+                        document.getElementById('corrected-text').value = data.choices.trim();
+                        remainingTries = decrementTries(); // Decrease tries on successful submission
+                    } else {
+                        alert('There was an error with the correction.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while trying to connect to the API.');
+                });
         }
 
         // Initialize the remaining tries when the page loads
-        window.onload = function() {
+        window.onload = function () {
             loadRemainingTries();
         }
     </script>
 
 </body>
+
 </html>

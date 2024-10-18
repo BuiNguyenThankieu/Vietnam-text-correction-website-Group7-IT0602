@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,13 +16,13 @@
 
         /* Style cho khung hiển thị lỗi chính tả */
         .error-box {
-            margin-top: 20px;
+            width: 30%;
+            /* Kích thước phần error-box */
             padding: 10px;
             border: 1px solid #ccc;
             background-color: #f9f9f9;
             border-radius: 5px;
-            width: 100%;
-            height: auto;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
         .no-errors {
@@ -32,37 +33,36 @@
             color: red;
         }
     </style>
-</head>
-<body>
-
     <div class="header-top">
         <h1>Vietnam Text Correction Website</h1>
         <button onclick="window.location.href='index.html'">Logout</button>
     </div>
+</head>
 
-    <div class="container">
-        <div class="input-section">
-            <p>Text input:</p>
+<body>
+    <div class="main-content">
+        <div class="container">
+            <div class="input-section">
+                <p>Text input:</p>
 
-            <!-- Trình soạn thảo văn bản -->
-            <div id="editor-container"></div>
+                <!-- Trình soạn thảo văn bản -->
+                <div id="editor-container"></div>
 
-            <div class="btn-section">
-                <button id="submit-btn">Submit</button>
+                <div class="btn-section">
+                    <button id="submit-btn">Submit</button>
+                </div>
             </div>
+
+            <div class="output-section">
+                <textarea readonly id="corrected-text" placeholder="Corrected Text"></textarea>
+            </div>
+
+            <div class="footer"></div>
         </div>
 
-        <div class="output-section">
-            <textarea readonly id="corrected-text" placeholder="Corrected Text"></textarea>
-        </div>
-
-        <!-- Khung hiển thị lỗi chính tả -->
+        <!-- Khung hiển thị lỗi chính tả thoát khỏi container -->
         <div class="error-box" id="error-box">
             <!-- Sẽ hiển thị lỗi ở đây -->
-        </div>
-
-        <div class="footer">
-            
         </div>
     </div>
 
@@ -76,85 +76,86 @@
                 toolbar: [
                     [{ 'font': [] }, { 'size': [] }],
                     ['bold', 'italic', 'underline'],
-                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
                     [{ 'align': [] }],
                     ['clean']
                 ]
             }
         });
 
-       // Thêm sự kiện click cho nút Submit
-document.getElementById('submit-btn').addEventListener('click', function() {
-    submitText();
-});
+        // Thêm sự kiện click cho nút Submit
+        document.getElementById('submit-btn').addEventListener('click', function () {
+            submitText();
+        });
 
-// Function để đánh dấu các từ sai và hiển thị lỗi
-function highlightErrors(text, errors) {
-    // Split the text into words
-    var words = text.split(/\s+/);
-    var highlightedText = '';
-    var errorBox = document.getElementById('error-box');
-    var errorList = '';
+        // Function để đánh dấu các từ sai và hiển thị lỗi
+        function highlightErrors(text, errors) {
+            // Split the text into words
+            var words = text.split(/\s+/);
+            var highlightedText = '';
+            var errorBox = document.getElementById('error-box');
+            var errorList = '';
 
-    // Loop through the words and highlight the incorrect ones
-    for (var i = 0; i < words.length; i++) {
-        if (errors.includes(words[i])) {
-            highlightedText += '<span class="incorrect">' + words[i] + '</span> ';
-            errorList += '<div>Sai chính tả: <strong>' + words[i] + '</strong></div>';
-        } else {
-            highlightedText += words[i] + ' ';
-        }
-    }
-
-    // Show the highlighted text in the editor
-    quill.root.innerHTML = highlightedText.trim();
-
-    // Show the errors in the error box
-    if (errorList === '') {
-        errorBox.innerHTML = '<div class="no-errors">Không có lỗi chính tả</div>';
-    } else {
-        errorBox.innerHTML = '<div class="has-errors">' + errorList + '</div>';
-    }
-}
-
-// Function to handle text submission
-function submitText() {
-    var text = quill.getText().trim(); // Lấy văn bản đơn giản và loại bỏ khoảng trắng thừa
-
-    // Gửi văn bản tới PHP để xử lý với OpenAI API
-    fetch('../php/openai_correction.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-            'text': text
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.choices) {
-            document.getElementById('corrected-text').value = data.choices.trim();
-            
-            // Cập nhật logic để lấy các từ bị sai chính tả từ kết quả API
-            // Trong ví dụ này, bạn cần có mảng errors từ API (thay thế bằng dữ liệu thực)
-            var errors = [];  // Đặt danh sách các từ sai chính tả lấy từ kết quả API
-            if (errors.length === 0) {
-                highlightErrors(text, errors);
-            } else {
-                highlightErrors(text, errors);  // Highlight từ sai chính tả
+            // Loop through the words and highlight the incorrect ones
+            for (var i = 0; i < words.length; i++) {
+                if (errors.includes(words[i])) {
+                    highlightedText += '<span class="incorrect">' + words[i] + '</span> ';
+                    errorList += '<div>Sai chính tả: <strong>' + words[i] + '</strong></div>';
+                } else {
+                    highlightedText += words[i] + ' ';
+                }
             }
-        } else {
-            alert('There was an error with the correction.');
+
+            // Show the highlighted text in the editor
+            quill.root.innerHTML = highlightedText.trim();
+
+            // Show the errors in the error box
+            if (errorList === '') {
+                errorBox.innerHTML = '<div class="no-errors">Không có lỗi chính tả</div>';
+            } else {
+                errorBox.innerHTML = '<div class="has-errors">' + errorList + '</div>';
+            }
         }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred while trying to connect to the API.');
-    });
-}
+
+        // Function to handle text submission
+        function submitText() {
+            var text = quill.getText().trim(); // Lấy văn bản đơn giản và loại bỏ khoảng trắng thừa
+
+            // Gửi văn bản tới PHP để xử lý với OpenAI API
+            fetch('../php/openai_correction.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    'text': text
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.choices) {
+                        document.getElementById('corrected-text').value = data.choices.trim();
+
+                        // Cập nhật logic để lấy các từ bị sai chính tả từ kết quả API
+                        // Trong ví dụ này, bạn cần có mảng errors từ API (thay thế bằng dữ liệu thực)
+                        var errors = [];  // Đặt danh sách các từ sai chính tả lấy từ kết quả API
+                        if (errors.length === 0) {
+                            highlightErrors(text, errors);
+                        } else {
+                            highlightErrors(text, errors);  // Highlight từ sai chính tả
+                        }
+                    } else {
+                        alert('There was an error with the correction.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while trying to connect to the API.');
+                });
+        }
 
     </script>
 
 </body>
+
 </html>

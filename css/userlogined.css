@@ -48,12 +48,22 @@ body {
 }
 
 .container {
-    width: 800px; /* Kích thước giống trang index */
+    width: 70%; /* Kích thước phần container */
     background-color: white;
     border: 1px solid #ccc;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     padding: 20px;
+}
+
+.main-content {
+    display: flex;
+    justify-content: flex-start; 
+    gap: 20px; 
+    width: 100%;
+    padding-top: 50px; 
+    padding-left: 50px;
+    padding-right: 50px; 
     margin-top: 20px;
 }
 
