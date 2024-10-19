@@ -17,7 +17,6 @@
         /* Style cho khung hiển thị lỗi chính tả */
         .error-box {
             width: 30%;
-            /* Kích thước phần error-box */
             padding: 10px;
             border: 1px solid #ccc;
             background-color: #f9f9f9;
@@ -50,16 +49,8 @@
 
                 <div class="btn-section">
                     <button id="submit-btn">Submit</button>
+                    <button id="download-btn" disabled>Download</button> <!-- Nút Download -->
                 </div>
-            </div>
-
-            <!-- Form upload file -->
-            <div class="file-upload-section">
-                <form id="upload-form" enctype="multipart/form-data">
-                    <label for="file">Upload Word or TXT File:</label>
-                    <input type="file" id="file" name="file" accept=".docx, .txt">
-                    <button type="submit">Upload</button>
-                </form>
             </div>
 
             <div class="output-section">
@@ -97,6 +88,11 @@
             submitText();
         });
 
+        // Thêm sự kiện click cho nút Download
+        document.getElementById('download-btn').addEventListener('click', function () {
+            downloadFile();
+        });
+
         // Function để đánh dấu các từ sai và hiển thị lỗi
         function highlightErrors(text, errors) {
             var words = text.split(/\s+/);
@@ -124,7 +120,7 @@
 
         // Function to handle text submission
         function submitText() {
-            var text = quill.getText().trim();
+            var text = quill.getText().trim(); // Lấy văn bản đơn giản và loại bỏ khoảng trắng thừa
 
             fetch('../php/openai_correction.php', {
                 method: 'POST',
@@ -135,56 +131,36 @@
                     'text': text
                 })
             })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.choices) {
-                        document.getElementById('corrected-text').value = data.choices.trim();
+            .then(response => response.json())
+            .then(data => {
+                if (data.choices) {
+                    document.getElementById('corrected-text').value = data.choices.trim();
+                    document.getElementById('download-btn').disabled = false; // Mở nút Download
 
-                        var errors = [];  // Update errors array
-                        if (errors.length === 0) {
-                            highlightErrors(text, errors);
-                        } else {
-                            highlightErrors(text, errors);
-                        }
-                    } else {
-                        alert('There was an error with the correction.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred while trying to connect to the API.');
-                });
+                    var errors = [];  // Đặt danh sách các từ sai chính tả lấy từ kết quả API
+                    highlightErrors(text, errors);  // Highlight từ sai chính tả
+                } else {
+                    alert('There was an error with the correction.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while trying to connect to the API.');
+            });
         }
 
-        // Handle file upload and submit for correction
-        document.getElementById('upload-form').addEventListener('submit', function (e) {
-            e.preventDefault();
-            
-            // Kiểm tra xem file đã được chọn chưa
-            var fileInput = document.getElementById('file');
-            if (!fileInput.files.length) {
-                alert('Please select a file before uploading.');
-                return; // Dừng lại nếu không có file được chọn
-            }
+        // Function to download the corrected text as a Word document
+        function downloadFile() {
+            var text = document.getElementById('corrected-text').value;
+            var blob = new Blob(['\ufeff' + text], { type: 'application/msword' });
+            var url = URL.createObjectURL(blob);
+            var link = document.createElement('a');
+            link.href = url;
+            link.download = 'corrected_text.doc'; // Tên file tải xuống
+            link.click();
+            URL.revokeObjectURL(url);
+        }
 
-            var formData = new FormData(this);
-
-            fetch('../php/file_upload_correction.php', {
-                method: 'POST',
-                body: formData
-            })
-                .then(response => response.blob())
-                .then(blob => {
-                    var downloadLink = document.createElement('a');
-                    downloadLink.href = window.URL.createObjectURL(blob);
-                    downloadLink.download = 'corrected_file.docx'; // Set default file name
-                    downloadLink.click();
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred while processing the file.');
-                });
-        });
     </script>
 
 </body>
