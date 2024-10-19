@@ -53,6 +53,15 @@
                 </div>
             </div>
 
+            <!-- Form upload file -->
+            <div class="file-upload-section">
+                <form id="upload-form" enctype="multipart/form-data">
+                    <label for="file">Upload Word or TXT File:</label>
+                    <input type="file" id="file" name="file" accept=".docx, .txt">
+                    <button type="submit">Upload</button>
+                </form>
+            </div>
+
             <div class="output-section">
                 <textarea readonly id="corrected-text" placeholder="Corrected Text"></textarea>
             </div>
@@ -90,13 +99,11 @@
 
         // Function để đánh dấu các từ sai và hiển thị lỗi
         function highlightErrors(text, errors) {
-            // Split the text into words
             var words = text.split(/\s+/);
             var highlightedText = '';
             var errorBox = document.getElementById('error-box');
             var errorList = '';
 
-            // Loop through the words and highlight the incorrect ones
             for (var i = 0; i < words.length; i++) {
                 if (errors.includes(words[i])) {
                     highlightedText += '<span class="incorrect">' + words[i] + '</span> ';
@@ -106,10 +113,8 @@
                 }
             }
 
-            // Show the highlighted text in the editor
             quill.root.innerHTML = highlightedText.trim();
 
-            // Show the errors in the error box
             if (errorList === '') {
                 errorBox.innerHTML = '<div class="no-errors">Không có lỗi chính tả</div>';
             } else {
@@ -119,9 +124,8 @@
 
         // Function to handle text submission
         function submitText() {
-            var text = quill.getText().trim(); // Lấy văn bản đơn giản và loại bỏ khoảng trắng thừa
+            var text = quill.getText().trim();
 
-            // Gửi văn bản tới PHP để xử lý với OpenAI API
             fetch('../php/openai_correction.php', {
                 method: 'POST',
                 headers: {
@@ -136,13 +140,11 @@
                     if (data.choices) {
                         document.getElementById('corrected-text').value = data.choices.trim();
 
-                        // Cập nhật logic để lấy các từ bị sai chính tả từ kết quả API
-                        // Trong ví dụ này, bạn cần có mảng errors từ API (thay thế bằng dữ liệu thực)
-                        var errors = [];  // Đặt danh sách các từ sai chính tả lấy từ kết quả API
+                        var errors = [];  // Update errors array
                         if (errors.length === 0) {
                             highlightErrors(text, errors);
                         } else {
-                            highlightErrors(text, errors);  // Highlight từ sai chính tả
+                            highlightErrors(text, errors);
                         }
                     } else {
                         alert('There was an error with the correction.');
@@ -154,6 +156,35 @@
                 });
         }
 
+        // Handle file upload and submit for correction
+        document.getElementById('upload-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            
+            // Kiểm tra xem file đã được chọn chưa
+            var fileInput = document.getElementById('file');
+            if (!fileInput.files.length) {
+                alert('Please select a file before uploading.');
+                return; // Dừng lại nếu không có file được chọn
+            }
+
+            var formData = new FormData(this);
+
+            fetch('../php/file_upload_correction.php', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.blob())
+                .then(blob => {
+                    var downloadLink = document.createElement('a');
+                    downloadLink.href = window.URL.createObjectURL(blob);
+                    downloadLink.download = 'corrected_file.docx'; // Set default file name
+                    downloadLink.click();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while processing the file.');
+                });
+        });
     </script>
 
 </body>
