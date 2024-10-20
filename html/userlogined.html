@@ -17,6 +17,7 @@
         /* Style cho khung hiển thị lỗi chính tả */
         .error-box {
             width: 30%;
+            /* Kích thước phần error-box */
             padding: 10px;
             border: 1px solid #ccc;
             background-color: #f9f9f9;
@@ -47,13 +48,11 @@
                 <!-- Trình soạn thảo văn bản -->
                 <div id="editor-container"></div>
 
-                <!-- Thêm nút chọn và tải file -->
-                <input type="file" id="file-input" accept=".txt,.docx" />
-                <button id="upload-btn">Upload</button>
-
                 <div class="btn-section">
+                    <input type="file" id="file-input" />
+                    <input type="submit" value="Upload" id="upload-btn" />
                     <button id="submit-btn">Submit</button>
-                    <button id="download-btn">Download</button>
+                    <button id="download-btn" class="download-btn">Download</button>
                 </div>
             </div>
 
@@ -87,23 +86,6 @@
             }
         });
 
-        // Thêm sự kiện click cho nút Upload
-        document.getElementById('upload-btn').addEventListener('click', function () {
-            var fileInput = document.getElementById('file-input');
-            var file = fileInput.files[0];
-
-            if (file) {
-                var reader = new FileReader();
-                reader.onload = function (e) {
-                    var text = e.target.result;
-                    quill.setText(text); // Đưa nội dung file vào trình soạn thảo văn bản
-                };
-                reader.readAsText(file); // Đọc file dưới dạng văn bản
-            } else {
-                alert("Please choose a file first.");
-            }
-        });
-
         // Thêm sự kiện click cho nút Submit
         document.getElementById('submit-btn').addEventListener('click', function () {
             submitText();
@@ -111,11 +93,13 @@
 
         // Function để đánh dấu các từ sai và hiển thị lỗi
         function highlightErrors(text, errors) {
+            // Split the text into words
             var words = text.split(/\s+/);
             var highlightedText = '';
             var errorBox = document.getElementById('error-box');
             var errorList = '';
 
+            // Loop through the words and highlight the incorrect ones
             for (var i = 0; i < words.length; i++) {
                 if (errors.includes(words[i])) {
                     highlightedText += '<span class="incorrect">' + words[i] + '</span> ';
@@ -125,8 +109,10 @@
                 }
             }
 
+            // Show the highlighted text in the editor
             quill.root.innerHTML = highlightedText.trim();
 
+            // Show the errors in the error box
             if (errorList === '') {
                 errorBox.innerHTML = '<div class="no-errors">Không có lỗi chính tả</div>';
             } else {
@@ -136,8 +122,9 @@
 
         // Function to handle text submission
         function submitText() {
-            var text = quill.getText().trim();
+            var text = quill.getText().trim(); // Lấy văn bản đơn giản và loại bỏ khoảng trắng thừa
 
+            // Gửi văn bản tới PHP để xử lý với OpenAI API
             fetch('../php/openai_correction.php', {
                 method: 'POST',
                 headers: {
@@ -152,11 +139,13 @@
                     if (data.choices) {
                         document.getElementById('corrected-text').value = data.choices.trim();
 
-                        var errors = [];
+                        // Cập nhật logic để lấy các từ bị sai chính tả từ kết quả API
+                        // Trong ví dụ này, bạn cần có mảng errors từ API (thay thế bằng dữ liệu thực)
+                        var errors = [];  // Đặt danh sách các từ sai chính tả lấy từ kết quả API
                         if (errors.length === 0) {
                             highlightErrors(text, errors);
                         } else {
-                            highlightErrors(text, errors);
+                            highlightErrors(text, errors);  // Highlight từ sai chính tả
                         }
                     } else {
                         alert('There was an error with the correction.');
@@ -167,6 +156,22 @@
                     alert('An error occurred while trying to connect to the API.');
                 });
         }
+
+        // Function để upload file và điền vào text input
+        document.getElementById('upload-btn').addEventListener('click', function () {
+            var fileInput = document.getElementById('file-input');
+            var file = fileInput.files[0];
+
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    quill.root.innerHTML = e.target.result;
+                };
+                reader.readAsText(file);
+            } else {
+                alert("No file selected.");
+            }
+        });
     </script>
 
 </body>
