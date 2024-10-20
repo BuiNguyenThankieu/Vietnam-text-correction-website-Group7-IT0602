@@ -58,12 +58,12 @@ body {
 
 .main-content {
     display: flex;
-    justify-content: flex-start; 
-    gap: 20px; 
+    justify-content: flex-start;
+    gap: 20px;
     width: 100%;
-    padding-top: 50px; 
+    padding-top: 50px;
     padding-left: 50px;
-    padding-right: 50px; 
+    padding-right: 50px;
     margin-top: 20px;
 }
 
@@ -86,7 +86,8 @@ body {
 
 .btn-section {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between; /* Chỉnh khoảng cách giữa các nút */
+    gap: 20px; /* Khoảng cách giữa hai nút */
 }
 
 .btn-section button {
@@ -117,29 +118,4 @@ body {
     text-align: center;
     font-size: 12px;
     color: #777;
-}
-
-/* Style cho các từ sai chính tả */
-.incorrect {
-    color: red;
-    text-decoration: underline;
-}
-
-/* Style cho khung hiển thị lỗi chính tả */
-.error-box {
-    width: 30%;
-    /* Kích thước phần error-box */
-    padding: 10px;
-    border: 1px solid #ccc;
-    background-color: #f9f9f9;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.no-errors {
-    color: green;
-}
-
-.has-errors {
-    color: red;
 }
