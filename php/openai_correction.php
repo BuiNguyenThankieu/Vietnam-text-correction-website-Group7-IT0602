@@ -1,8 +1,8 @@
 <?php
 // API key cho OpenAI
-$api_key = ''; 
+$api_key = 'YOUR_API_KEY_HERE';
 
-// Lấy dữ liệu văn bản từ yêu cầu POST  
+// Lấy dữ liệu văn bản từ yêu cầu POST
 $text = $_POST['text'] ?? '';
 
 // Kiểm tra xem văn bản có rỗng hay không
@@ -17,11 +17,11 @@ $url = 'https://api.openai.com/v1/chat/completions';
 $data = [
     'model' => 'gpt-3.5-turbo',
     'messages' => [
-        ['role' => 'system', 'content' => 'You are an assistant that corrects spelling and grammar mistakes in the given text. Respond only with the corrected text.'],
-        ['role' => 'user', 'content' => $text], // Gửi trực tiếp văn bản cần sửa lỗi
+        ['role' => 'system', 'content' => 'You are an assistant that corrects spelling and grammar mistakes in Vietnamese. Respond with the corrected text and list of spelling errors.'],
+        ['role' => 'user', 'content' => $text],
     ],
     'max_tokens' => 500,
-    'temperature' => 0.7,
+    'temperature' => 0.4,
 ];
 
 // Cấu hình cURL để gửi yêu cầu
@@ -50,9 +50,13 @@ $result = json_decode($response, true);
 
 // Kiểm tra phản hồi từ API
 if (isset($result['choices'][0]['message']['content'])) {
-    // Loại bỏ dấu ngoặc kép nếu có
     $corrected_text = trim($result['choices'][0]['message']['content'], '"');
-    echo json_encode(['choices' => $corrected_text]);
+
+    // Tạo danh sách các từ sai (sử dụng mảng giả định hoặc API trả về danh sách lỗi)
+    $errors = []; // Cập nhật với danh sách từ sai chính tả từ API nếu có
+    
+    // Trả về kết quả bao gồm văn bản đã chỉnh sửa và các lỗi
+    echo json_encode(['choices' => $corrected_text, 'errors' => $errors]);
 } else {
     echo json_encode(['error' => 'API did not return a valid response']);
 }
