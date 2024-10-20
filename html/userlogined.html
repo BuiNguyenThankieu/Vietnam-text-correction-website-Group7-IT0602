@@ -47,9 +47,13 @@
                 <!-- Trình soạn thảo văn bản -->
                 <div id="editor-container"></div>
 
+                <!-- Thêm nút chọn và tải file -->
+                <input type="file" id="file-input" accept=".txt,.docx" />
+                <button id="upload-btn">Upload</button>
+
                 <div class="btn-section">
                     <button id="submit-btn">Submit</button>
-                    <button id="download-btn" disabled>Download</button> <!-- Nút Download -->
+                    <button id="download-btn">Download</button>
                 </div>
             </div>
 
@@ -83,14 +87,26 @@
             }
         });
 
+        // Thêm sự kiện click cho nút Upload
+        document.getElementById('upload-btn').addEventListener('click', function () {
+            var fileInput = document.getElementById('file-input');
+            var file = fileInput.files[0];
+
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    var text = e.target.result;
+                    quill.setText(text); // Đưa nội dung file vào trình soạn thảo văn bản
+                };
+                reader.readAsText(file); // Đọc file dưới dạng văn bản
+            } else {
+                alert("Please choose a file first.");
+            }
+        });
+
         // Thêm sự kiện click cho nút Submit
         document.getElementById('submit-btn').addEventListener('click', function () {
             submitText();
-        });
-
-        // Thêm sự kiện click cho nút Download
-        document.getElementById('download-btn').addEventListener('click', function () {
-            downloadFile();
         });
 
         // Function để đánh dấu các từ sai và hiển thị lỗi
@@ -120,7 +136,7 @@
 
         // Function to handle text submission
         function submitText() {
-            var text = quill.getText().trim(); // Lấy văn bản đơn giản và loại bỏ khoảng trắng thừa
+            var text = quill.getText().trim();
 
             fetch('../php/openai_correction.php', {
                 method: 'POST',
@@ -131,36 +147,26 @@
                     'text': text
                 })
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.choices) {
-                    document.getElementById('corrected-text').value = data.choices.trim();
-                    document.getElementById('download-btn').disabled = false; // Mở nút Download
+                .then(response => response.json())
+                .then(data => {
+                    if (data.choices) {
+                        document.getElementById('corrected-text').value = data.choices.trim();
 
-                    var errors = [];  // Đặt danh sách các từ sai chính tả lấy từ kết quả API
-                    highlightErrors(text, errors);  // Highlight từ sai chính tả
-                } else {
-                    alert('There was an error with the correction.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while trying to connect to the API.');
-            });
+                        var errors = [];
+                        if (errors.length === 0) {
+                            highlightErrors(text, errors);
+                        } else {
+                            highlightErrors(text, errors);
+                        }
+                    } else {
+                        alert('There was an error with the correction.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while trying to connect to the API.');
+                });
         }
-
-        // Function to download the corrected text as a Word document
-        function downloadFile() {
-            var text = document.getElementById('corrected-text').value;
-            var blob = new Blob(['\ufeff' + text], { type: 'application/msword' });
-            var url = URL.createObjectURL(blob);
-            var link = document.createElement('a');
-            link.href = url;
-            link.download = 'corrected_text.doc'; // Tên file tải xuống
-            link.click();
-            URL.revokeObjectURL(url);
-        }
-
     </script>
 
 </body>
