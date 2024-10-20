@@ -10,34 +10,33 @@ body {
     flex-direction: column;
     align-items: center;
     height: 100vh;
-    background-color: #ffbba4f5; /* Thay đổi màu nền giống trang index */
+    background-color: #ffbba4f5;
     justify-content: flex-start;
 }
 
-/* Header trên cùng chứa tiêu đề và nút */
+/* Header */
 .header-top {
     width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 20px;
-    background-color: #ff612df5; /* Màu nền cho header */
+    background-color: #ff612df5;
     color: white;
 }
 
 .header-top h1 {
-    font-size: 24px; /* Kích thước chữ lớn hơn */
+    font-size: 24px;
     margin: 0;
 }
 
 .header-top button {
     padding: 10px 20px;
-    margin-left: 10px;
     background-color: white;
     color: #ff612df5;
     border-radius: 5px;
-    border: 2px solid black; /* Sửa màu border */
-    box-shadow: 4px 4px black; /* Thêm bóng cho nút */
+    border: 2px solid black;
+    box-shadow: 4px 4px black;
     font-size: 17px;
     font-weight: 600;
     cursor: pointer;
@@ -48,7 +47,7 @@ body {
 }
 
 .container {
-    width: 70%; /* Kích thước phần container */
+    width: 70%;
     background-color: white;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -58,12 +57,12 @@ body {
 
 .main-content {
     display: flex;
-    justify-content: flex-start; 
-    gap: 20px; 
+    justify-content: flex-start;
+    gap: 20px;
     width: 100%;
-    padding-top: 50px; 
+    padding-top: 50px;
     padding-left: 50px;
-    padding-right: 50px; 
+    padding-right: 50px;
     margin-top: 20px;
 }
 
@@ -72,7 +71,7 @@ body {
 }
 
 #editor-container {
-    height: 200px; /* Chiều cao của trình soạn thảo */
+    height: 200px;
     border: 1px solid #ccc;
     border-radius: 5px;
     margin-bottom: 10px;
@@ -93,7 +92,7 @@ body {
 
 .btn-section button, .btn-section input[type="file"], .btn-section input[type="submit"] {
     padding: 10px 20px;
-    margin: 5px; /* Điều chỉnh khoảng cách giữa các nút */
+    margin: 5px;
     border: 1px solid #ff612df5;
     background-color: #ff612df5;
     color: white;
@@ -106,17 +105,8 @@ input[type="file"] {
     font-size: 14px;
 }
 
-input[type="submit"] {
-    padding: 10px 20px;
-    background-color: #ff612df5;
-    color: white;
-    border: 1px solid #ff612df5;
-    border-radius: 3px;
-    cursor: pointer;
-}
-
 .btn-section button.download-btn {
-    margin-left: 10px; /* Điều chỉnh khoảng cách nút Download để tách ra */
+    margin-left: 10px;
 }
 
 .output-section {
@@ -130,7 +120,29 @@ input[type="submit"] {
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 14px;
-    background-color: #f9f9f9; /* Màu nền giống trang index */
+    background-color: #f9f9f9;
+}
+
+.error-box {
+    width: 30%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.incorrect {
+    color: red;
+    text-decoration: underline;
+}
+
+.no-errors {
+    color: green;
+}
+
+.has-errors {
+    color: red;
 }
 
 .footer {

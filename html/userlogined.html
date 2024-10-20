@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vietnam Text Correction Website - Logged In</title>
+<<<<<<< HEAD
+    <title>Vietname Text Correction Website - Logged In</title>
     <link rel="stylesheet" href="https://cdn.quilljs.com/1.3.6/quill.snow.css">
     <link rel="stylesheet" href="../css/userlogined.css">
     <style>
@@ -34,22 +35,32 @@
         }
     </style>
     <div class="header-top">
-        <h1>Vietnam Text Correction Website</h1>
+        <h1>Vietnamese Text Correction Website</h1>
         <button onclick="window.location.href='index.html'">Logout</button>
     </div>
+=======
+    <title>Vietnamese Text Correction Website - Logged In</title>
+    <link rel="stylesheet" href="https://cdn.quilljs.com/1.3.6/quill.snow.css">
+    <link rel="stylesheet" href="../css/userlogined.css">
+>>>>>>> cb3f4d86cdd4c3e1acaa9de84b127a95e819f42a
 </head>
 
 <body>
+    <div class="header-top">
+        <h1>Vietnamese Text Correction Website</h1>
+        <button onclick="window.location.href='index.html'">Logout</button>
+    </div>
+
     <div class="main-content">
         <div class="container">
             <div class="input-section">
                 <p>Text input:</p>
 
-                <!-- Trình soạn thảo văn bản -->
+                <!-- Text editor -->
                 <div id="editor-container"></div>
 
                 <div class="btn-section">
-                    <input type="file" id="file-input" accept=".doc,.docx" />
+                    <input type="file" id="file-input" accept=".docx" />
                     <input type="submit" value="Upload" id="upload-btn" />
                     <button id="submit-btn">Submit</button>
                     <button id="download-btn" class="download-btn">Download</button>
@@ -59,14 +70,10 @@
             <div class="output-section">
                 <textarea readonly id="corrected-text" placeholder="Corrected Text"></textarea>
             </div>
-
-            <div class="footer"></div>
         </div>
 
-        <!-- Khung hiển thị lỗi chính tả thoát khỏi container -->
-        <div class="error-box" id="error-box">
-            <!-- Sẽ hiển thị lỗi ở đây -->
-        </div>
+        <!-- Error display box -->
+        <div class="error-box" id="error-box"></div>
     </div>
 
     <!-- Quill JS -->
@@ -86,87 +93,7 @@
             }
         });
 
-        // Thêm sự kiện click cho nút Submit
-        document.getElementById('submit-btn').addEventListener('click', function () {
-            submitText();
-        });
-
-        // Function để đánh dấu các từ sai và hiển thị lỗi
-function highlightErrors(text, errors) {
-    // Split the text into words
-    var words = text.split(/\s+/);
-    var highlightedText = '';
-    var errorBox = document.getElementById('error-box');
-    var errorList = '';
-
-    // Loop through the words and highlight the incorrect ones
-    for (var i = 0; i < words.length; i++) {
-        if (errors.includes(words[i])) {
-            highlightedText += '<span class="incorrect">' + words[i] + '</span> ';
-            errorList += '<div>Sai chính tả: <strong>' + words[i] + '</strong></div>';
-        } else {
-            highlightedText += words[i] + ' ';
-        }
-    }
-
-    // Show the highlighted text in the editor
-    quill.root.innerHTML = highlightedText.trim();
-
-    // Show the errors in the error box
-    if (errors.length === 0) {
-        errorBox.innerHTML = '<div class="no-errors">Không có lỗi chính tả</div>';
-    } else {
-        errorBox.innerHTML = '<div class="has-errors">' + errorList + '</div>';
-    }
-}
-
-
-       // Function to handle text submission
-function submitText() {
-    var text = quill.getText().trim(); // Lấy văn bản đơn giản và loại bỏ khoảng trắng thừa
-
-    // Gửi văn bản tới PHP để xử lý với OpenAI API
-    fetch('../php/openai_correction.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-            'text': text
-        })
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.choices) {
-                var correctedText = data.choices.trim();
-                document.getElementById('corrected-text').value = correctedText;
-
-                // So sánh văn bản gốc với văn bản đã sửa để tìm các từ bị sai chính tả
-                var originalWords = text.split(/\s+/);
-                var correctedWords = correctedText.split(/\s+/);
-                var errors = [];
-
-                // Tìm các từ khác nhau giữa bản gốc và bản sửa
-                for (var i = 0; i < originalWords.length; i++) {
-                    if (originalWords[i] !== correctedWords[i]) {
-                        errors.push(originalWords[i]);
-                    }
-                }
-
-                // Highlight các từ sai chính tả và hiển thị trong error-box
-                highlightErrors(text, errors);
-            } else {
-                alert('There was an error with the correction.');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred while trying to connect to the API.');
-        });
-}
-
-
-        // Function để upload file và điền vào text input
+        // Upload button event listener
         document.getElementById('upload-btn').addEventListener('click', function () {
             var fileInput = document.getElementById('file-input');
             var file = fileInput.files[0];
@@ -181,6 +108,68 @@ function submitText() {
                 alert("No file selected.");
             }
         });
+
+        // Submit button event listener
+        document.getElementById('submit-btn').addEventListener('click', function () {
+            submitText();
+        });
+
+        // Highlight spelling errors function
+        function highlightErrors(text, errors) {
+            var words = text.split(/\s+/);
+            var highlightedText = '';
+            var errorBox = document.getElementById('error-box');
+            var errorList = '';
+
+            // Highlight incorrect words
+            for (var i = 0; i < words.length; i++) {
+                if (errors.includes(words[i])) {
+                    highlightedText += '<span class="incorrect">' + words[i] + '</span> ';
+                    errorList += '<div>Sai chính tả: <strong>' + words[i] + '</strong></div>';
+                } else {
+                    highlightedText += words[i] + ' ';
+                }
+            }
+
+            quill.root.innerHTML = highlightedText.trim();
+
+            if (errorList === '') {
+                errorBox.innerHTML = '<div class="no-errors">Không có lỗi chính tả</div>';
+            } else {
+                errorBox.innerHTML = '<div class="has-errors">' + errorList + '</div>';
+            }
+        }
+
+        // Submit text function
+        function submitText() {
+            var text = quill.getText().trim();
+
+            fetch('../php/openai_correction.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    'text': text
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.choices) {
+                        document.getElementById('corrected-text').value = data.choices.trim();
+
+                        // Retrieve errors from the API response
+                        var errors = data.errors || [];
+                        highlightErrors(text, errors);
+                    } else {
+                        alert('There was an error with the correction.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while trying to connect to the API.');
+                });
+        }
     </script>
 
 </body>
