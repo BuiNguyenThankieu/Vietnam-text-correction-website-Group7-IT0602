@@ -20,11 +20,11 @@
             <div class="input-section">
                 <p>Text input:</p>
 
-                <!-- Text editor -->
+                <!-- Trình soạn thảo văn bản -->
                 <div id="editor-container"></div>
 
                 <div class="btn-section">
-                    <input type="file" id="file-input" accept=".docx" />
+                    <input type="file" id="file-input" />
                     <input type="submit" value="Upload" id="upload-btn" />
                     <button id="submit-btn">Submit</button>
                     <button id="download-btn" class="download-btn">Download</button>
@@ -34,10 +34,14 @@
             <div class="output-section">
                 <textarea readonly id="corrected-text" placeholder="Corrected Text"></textarea>
             </div>
+
+            <div class="footer"></div>
         </div>
 
-        <!-- Error display box -->
-        <div class="error-box" id="error-box"></div>
+        <!-- Khung hiển thị lỗi chính tả thoát khỏi container -->
+        <div class="error-box" id="error-box">
+            <!-- Sẽ hiển thị lỗi ở đây -->
+        </div>
     </div>
 
     <!-- Quill JS -->
@@ -57,7 +61,61 @@
             }
         });
 
-        // Upload button event listener
+        // Thêm sự kiện click cho nút Submit
+        document.getElementById('submit-btn').addEventListener('click', function () {
+            submitText();
+        });
+
+        // Function để đánh dấu các từ sai và hiển thị lỗi
+        function highlightErrors(text, errors) {
+            var errorBox = document.getElementById('error-box');
+            var errorList = '';
+
+            // Hiển thị danh sách các từ sai chính tả
+            if (errors.length === 0) {
+                errorBox.innerHTML = '<div class="no-errors">Không có lỗi chính tả</div>';
+            } else {
+                errors.forEach(function (error, index) {
+                    errorList += '<div>Sai chính tả: <strong>' + error + '</strong></div>';
+                });
+                errorBox.innerHTML = '<div class="has-errors">' + errorList + '</div>';
+            }
+        }
+
+        // Function to handle text submission
+        function submitText() {
+            var text = quill.getText().trim(); // Lấy văn bản đơn giản và loại bỏ khoảng trắng thừa
+
+            // Gửi văn bản tới PHP để xử lý với OpenAI API
+            fetch('../php/openai_correction.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    'text': text
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.choices) {
+                    // Hiển thị văn bản đã chỉnh sửa trong ô corrected-text
+                    document.getElementById('corrected-text').value = data.choices.trim();
+
+                    // Lấy danh sách từ sai chính tả từ API (errors)
+                    var errors = data.errors || []; // Mảng lỗi từ API trả về (nếu có)
+                    highlightErrors(text, errors);
+                } else {
+                    alert('There was an error with the correction.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while trying to connect to the API.');
+            });
+        }
+
+        // Function để upload file và điền vào text input
         document.getElementById('upload-btn').addEventListener('click', function () {
             var fileInput = document.getElementById('file-input');
             var file = fileInput.files[0];
@@ -72,68 +130,6 @@
                 alert("No file selected.");
             }
         });
-
-        // Submit button event listener
-        document.getElementById('submit-btn').addEventListener('click', function () {
-            submitText();
-        });
-
-        // Highlight spelling errors function
-        function highlightErrors(text, errors) {
-            var words = text.split(/\s+/);
-            var highlightedText = '';
-            var errorBox = document.getElementById('error-box');
-            var errorList = '';
-
-            // Highlight incorrect words
-            for (var i = 0; i < words.length; i++) {
-                if (errors.includes(words[i])) {
-                    highlightedText += '<span class="incorrect">' + words[i] + '</span> ';
-                    errorList += '<div>Sai chính tả: <strong>' + words[i] + '</strong></div>';
-                } else {
-                    highlightedText += words[i] + ' ';
-                }
-            }
-
-            quill.root.innerHTML = highlightedText.trim();
-
-            if (errorList === '') {
-                errorBox.innerHTML = '<div class="no-errors">Không có lỗi chính tả</div>';
-            } else {
-                errorBox.innerHTML = '<div class="has-errors">' + errorList + '</div>';
-            }
-        }
-
-        // Submit text function
-        function submitText() {
-            var text = quill.getText().trim();
-
-            fetch('../php/openai_correction.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: new URLSearchParams({
-                    'text': text
-                })
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.choices) {
-                        document.getElementById('corrected-text').value = data.choices.trim();
-
-                        // Retrieve errors from the API response
-                        var errors = data.errors || [];
-                        highlightErrors(text, errors);
-                    } else {
-                        alert('There was an error with the correction.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred while trying to connect to the API.');
-                });
-        }
     </script>
 
 </body>
