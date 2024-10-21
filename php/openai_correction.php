@@ -15,13 +15,13 @@ if (empty($text)) {
 $url = 'https://api.openai.com/v1/chat/completions';
 
 $data = [
-    'model' => 'gpt-3.5-turbo',
+    'model' => 'gpt-4',
     'messages' => [
         ['role' => 'system', 'content' => 'You are an assistant that corrects spelling and grammar mistakes in Vietnamese. Respond with the corrected text and list of spelling errors.'],
         ['role' => 'user', 'content' => $text],
     ],
     'max_tokens' => 500,
-    'temperature' => 0.4,
+    'temperature' => 0.3,
 ];
 
 // Cấu hình cURL để gửi yêu cầu
