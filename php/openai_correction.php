@@ -52,7 +52,14 @@ $result = json_decode($response, true);
 if (isset($result['choices'][0]['message']['content'])) {
     $corrected_text = trim($result['choices'][0]['message']['content'], '"');
 
-    // Tạo danh sách các từ sai (sử dụng mảng giả định hoặc API trả về danh sách lỗi)
+    // Loại bỏ phần "Spelling errors" khỏi đoạn văn bản đã sửa
+    if (strpos($corrected_text, 'Spelling errors') !== false) {
+        // Tìm vị trí của từ khóa "Spelling errors"
+        $corrected_text = substr($corrected_text, 0, strpos($corrected_text, 'Spelling errors'));
+        $corrected_text = trim($corrected_text); // Loại bỏ khoảng trắng thừa
+    }
+
+    // Tạo danh sách các từ sai (nếu API trả về danh sách lỗi, cập nhật vào đây)
     $errors = []; // Cập nhật với danh sách từ sai chính tả từ API nếu có
     
     // Trả về kết quả bao gồm văn bản đã chỉnh sửa và các lỗi
