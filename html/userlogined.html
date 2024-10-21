@@ -93,12 +93,22 @@
             submitText();
         });
 
-        // Function để hiển thị lỗi sai trong error-box
-        function showErrors(errors) {
+        // Function để đánh dấu các từ sai và hiển thị lỗi
+        function highlightErrors(text, errors) {
+            var highlightedText = ''; // Khởi tạo chuỗi giữ văn bản đã highlight
             var errorBox = document.getElementById('error-box');
             var errorList = '';
 
-            // Hiển thị lỗi trong error-box
+            // Highlight lỗi trong văn bản nhưng không thay đổi cấu trúc đoạn văn bản
+            for (var i = 0; i < text.length; i++) {
+                if (errors.includes(text[i])) {
+                    highlightedText += '<span class="incorrect">' + text[i] + '</span>';
+                } else {
+                    highlightedText += text[i];
+                }
+            }
+
+            // Hiển thị lỗi trong error-box bên phải
             if (errors.length === 0) {
                 errorBox.innerHTML = '<div class="no-errors">Không có lỗi chính tả</div>';
             } else {
@@ -139,13 +149,19 @@
                             }
                         }
 
-                        // Hiển thị các lỗi trong error-box
-                        showErrors(errors);
+                        // Hiển thị các lỗi trong error-box và highlight các từ trong văn bản
+                        highlightErrors(text, errors);
 
-                        // Nếu không có lỗi, hiển thị thông báo "Văn bản chính xác"
-                        if (errors.length === 0) {
-                            document.getElementById('corrected-text').value = "Văn bản chính xác.";
-                        }
+                        // Thêm phần spelling errors vào error-box thay vì textarea
+                        var errorBox = document.getElementById('error-box');
+                        var spellingErrors = '';
+                        errors.forEach(function (error, index) {
+                            spellingErrors += `<div>Spelling errors:<br>${index + 1}. "${error}" should be "${correctedWords[index]}"</div>`;
+                        });
+                        errorBox.innerHTML = spellingErrors; // Hiển thị lỗi trong error-box
+
+                        // Xóa phần hiển thị lỗi ở Corrected Text
+                        document.getElementById('corrected-text').value = correctedText.replace(/Spelling errors.*/s, '');
                     } else {
                         alert('There was an error with the correction.');
                     }
@@ -155,8 +171,6 @@
                     alert('An error occurred while trying to connect to the API.');
                 });
         }
-
-
 
         document.getElementById('upload-btn').addEventListener('click', function () {
             var fileInput = document.getElementById('file-input');
