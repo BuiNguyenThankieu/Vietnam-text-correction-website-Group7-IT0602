@@ -1,6 +1,6 @@
 <?php
 // API key cho OpenAI
-$api_key = '';
+$api_key = 'YOUR_API_KEY_HERE';
 
 // Lấy dữ liệu văn bản từ yêu cầu POST
 $text = $_POST['text'] ?? '';
@@ -45,7 +45,7 @@ if (curl_errno($curl)) {
 
 curl_close($curl);
 
-// Chuyển đổi phản hồi JSON thành mảng PHP.
+// Chuyển đổi phản hồi JSON thành mảng PHP
 $result = json_decode($response, true);
 
 // Kiểm tra phản hồi từ API
