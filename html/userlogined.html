@@ -93,28 +93,19 @@
             submitText();
         });
 
-        // Function để đánh dấu các từ sai và hiển thị lỗi
-        function highlightErrors(text, errors) {
-            var highlightedText = ''; // Khởi tạo chuỗi giữ văn bản đã highlight
+        // Function để hiển thị lỗi sai trong error-box
+        function showErrors(errors) {
             var errorBox = document.getElementById('error-box');
+            var errorList = '';
 
-            // Highlight lỗi trong văn bản
-            for (var i = 0; i < text.length; i++) {
-                if (errors.includes(text[i])) {
-                    highlightedText += '<span class="incorrect">' + text[i] + '</span>';
-                } else {
-                    highlightedText += text[i];
-                }
-            }
-
-            // Cập nhật nội dung của editor với văn bản đã highlight
-            quill.root.innerHTML = highlightedText;
-
-            // Hiển thị lỗi trong error-box bên phải
+            // Hiển thị lỗi trong error-box
             if (errors.length === 0) {
-                errorBox.innerHTML = '<div class="no-errors">Không có lỗi sai chính tả</div>';
+                errorBox.innerHTML = '<div class="no-errors">Không có lỗi chính tả</div>';
             } else {
-                errorBox.innerHTML = '';  // Không cần hiển thị gì ngoài highlight trong văn bản
+                errors.forEach((error, index) => {
+                    errorList += `<div>Sai chính tả: <strong>${error}</strong></div>`;
+                });
+                errorBox.innerHTML = '<div class="has-errors">' + errorList + '</div>';
             }
         }
 
@@ -148,13 +139,13 @@
                             }
                         }
 
-                        // Nếu không có lỗi chính tả
-                        if (errors.length === 0) {
-                            document.getElementById('corrected-text').value = "Văn bản không có lỗi chính tả.";
-                        }
+                        // Hiển thị các lỗi trong error-box
+                        showErrors(errors);
 
-                        // Hiển thị các lỗi trong error-box và highlight các từ sai
-                        highlightErrors(text, errors);
+                        // Nếu không có lỗi, hiển thị thông báo "Văn bản chính xác"
+                        if (errors.length === 0) {
+                            document.getElementById('corrected-text').value = "Văn bản chính xác.";
+                        }
                     } else {
                         alert('There was an error with the correction.');
                     }
@@ -164,6 +155,7 @@
                     alert('An error occurred while trying to connect to the API.');
                 });
         }
+
 
 
         document.getElementById('upload-btn').addEventListener('click', function () {
