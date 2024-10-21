@@ -52,29 +52,11 @@ $result = json_decode($response, true);
 if (isset($result['choices'][0]['message']['content'])) {
     $corrected_text = trim($result['choices'][0]['message']['content'], '"');
 
-    // Tạo danh sách các từ sai (giả định có API trả về danh sách lỗi)
+    // Tạo danh sách các từ sai (sử dụng mảng giả định hoặc API trả về danh sách lỗi)
     $errors = []; // Cập nhật với danh sách từ sai chính tả từ API nếu có
-
-    // Tách văn bản gốc thành mảng từ
-    $original_words = explode(' ', $text);
-    $corrected_words = explode(' ', $corrected_text);
     
-    // Lọc bỏ các từ có lỗi khỏi corrected_text
-    $filtered_corrected_text = [];
-    for ($i = 0; $i < count($original_words); $i++) {
-        if (!in_array($original_words[$i], $errors)) {
-            $filtered_corrected_text[] = $corrected_words[$i];
-        }
-    }
-
-    // Kết nối lại văn bản sau khi lọc bỏ các từ sai
-    $filtered_corrected_text = implode(' ', $filtered_corrected_text);
-
     // Trả về kết quả bao gồm văn bản đã chỉnh sửa và các lỗi
-    echo json_encode([
-        'choices' => $filtered_corrected_text, 
-        'errors' => $errors
-    ]);
+    echo json_encode(['choices' => $corrected_text, 'errors' => $errors]);
 } else {
     echo json_encode(['error' => 'API did not return a valid response']);
 }
