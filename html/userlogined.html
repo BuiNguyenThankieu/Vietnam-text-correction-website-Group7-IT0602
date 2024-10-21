@@ -109,6 +109,22 @@
             }
         }
 
+        // Function để hiển thị lỗi sai trong error-box
+        function showErrors(errors) {
+            var errorBox = document.getElementById('error-box');
+            var errorList = '';
+
+            // Hiển thị lỗi trong error-box
+            if (errors.length === 0) {
+                errorBox.innerHTML = '<div class="no-errors">Không có lỗi chính tả</div>';
+            } else {
+                errors.forEach((error) => {
+                    errorList += `<div>Sai chính tả: <strong>${error}</strong></div>`;
+                });
+                errorBox.innerHTML = '<div class="has-errors">' + errorList + '</div>';
+            }
+        }
+
         // Function to handle text submission
         function submitText() {
             var text = quill.getText().trim();
@@ -126,7 +142,6 @@
                 .then(data => {
                     if (data.choices) {
                         var correctedText = data.choices.trim();
-                        document.getElementById('corrected-text').value = correctedText;
 
                         // So sánh văn bản gốc với văn bản đã sửa để tìm các từ bị sai chính tả
                         var originalWords = text.split(/\s+/);
@@ -145,6 +160,9 @@
                         // Nếu không có lỗi, hiển thị thông báo "Văn bản chính xác"
                         if (errors.length === 0) {
                             document.getElementById('corrected-text').value = "Văn bản chính xác.";
+                        } else {
+                            // Nếu có lỗi chính tả, không hiển thị văn bản đã sửa trong `corrected-text`
+                            document.getElementById('corrected-text').value = "";
                         }
                     } else {
                         alert('There was an error with the correction.');
@@ -155,6 +173,7 @@
                     alert('An error occurred while trying to connect to the API.');
                 });
         }
+
 
 
 
