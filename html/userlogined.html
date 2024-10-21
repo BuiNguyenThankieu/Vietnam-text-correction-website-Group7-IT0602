@@ -97,9 +97,8 @@
         function highlightErrors(text, errors) {
             var highlightedText = ''; // Khởi tạo chuỗi giữ văn bản đã highlight
             var errorBox = document.getElementById('error-box');
-            var errorList = '';
 
-            // Highlight lỗi trong văn bản nhưng không thay đổi cấu trúc đoạn văn bản
+            // Highlight lỗi trong văn bản
             for (var i = 0; i < text.length; i++) {
                 if (errors.includes(text[i])) {
                     highlightedText += '<span class="incorrect">' + text[i] + '</span>';
@@ -108,70 +107,64 @@
                 }
             }
 
+            // Cập nhật nội dung của editor với văn bản đã highlight
+            quill.root.innerHTML = highlightedText;
+
             // Hiển thị lỗi trong error-box bên phải
             if (errors.length === 0) {
-                errorBox.innerHTML = ''; // Không hiển thị nội dung khi không có lỗi
+                errorBox.innerHTML = '<div class="no-errors">Không có lỗi sai chính tả</div>';
             } else {
-                errors.forEach((error, index) => {
-                    errorList += `<div>Sai chính tả: <strong>${error}</strong></div>`;
-                });
-                errorBox.innerHTML = '<div class="has-errors">' + errorList + '</div>';
+                errorBox.innerHTML = '';  // Không cần hiển thị gì ngoài highlight trong văn bản
             }
         }
 
-       // Function to handle text submission
-       function submitText() {
-    var text = quill.getText().trim();
+        // Function to handle text submission
+        function submitText() {
+            var text = quill.getText().trim();
 
-    fetch('../php/openai_correction.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-            'text': text
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.choices) {
-            var correctedText = data.choices.trim();
-            // Loại bỏ đoạn văn bản chứa "Spelling errors" khỏi Corrected Box
-            var cleanedCorrectedText = correctedText.replace(/Spelling errors.*/s, '').trim();
-            document.getElementById('corrected-text').value = cleanedCorrectedText;
+            fetch('../php/openai_correction.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    'text': text
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.choices) {
+                        var correctedText = data.choices.trim();
+                        document.getElementById('corrected-text').value = correctedText;
 
-            if (cleanedCorrectedText === "The text is correct. There are no spelling or grammar mistakes.") {
-                // Khi không có lỗi chính tả
-                document.getElementById('error-box').innerHTML = ''; // Để trống error box
-            } else {
-                // So sánh văn bản gốc với văn bản đã sửa để tìm các từ bị sai chính tả
-                var originalWords = text.split(/\s+/);
-                var correctedWords = cleanedCorrectedText.split(/\s+/);
-                var errors = [];
+                        // So sánh văn bản gốc với văn bản đã sửa để tìm các từ bị sai chính tả
+                        var originalWords = text.split(/\s+/);
+                        var correctedWords = correctedText.split(/\s+/);
+                        var errors = [];
 
-                for (var i = 0; i < originalWords.length; i++) {
-                    if (originalWords[i] !== correctedWords[i]) {
-                        errors.push(originalWords[i]);
+                        for (var i = 0; i < originalWords.length; i++) {
+                            if (originalWords[i] !== correctedWords[i]) {
+                                errors.push(originalWords[i]);
+                            }
+                        }
+
+                        // Nếu không có lỗi chính tả
+                        if (errors.length === 0) {
+                            document.getElementById('corrected-text').value = "Văn bản không có lỗi chính tả.";
+                        }
+
+                        // Hiển thị các lỗi trong error-box và highlight các từ sai
+                        highlightErrors(text, errors);
+                    } else {
+                        alert('There was an error with the correction.');
                     }
-                }
-
-                // Hiển thị các lỗi trong error-box và highlight các từ trong văn bản
-                if (errors.length > 0) {
-                    highlightErrors(text, errors);
-                } else {
-                    document.getElementById('error-box').innerHTML = ''; // Để trống error box nếu không có lỗi
-                }
-            }
-
-        } else {
-            alert('There was an error with the correction.');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while trying to connect to the API.');
+                });
         }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred while trying to connect to the API.');
-    });
-}
+
 
         document.getElementById('upload-btn').addEventListener('click', function () {
             var fileInput = document.getElementById('file-input');
