@@ -93,21 +93,21 @@
             submitText();
         });
 
-        // Function để đánh dấu các từ sai và hiển thị lỗi
-        function highlightErrors(errors) {
-            var errorBox = document.getElementById('error-box');
-            var errorList = '';
+       // Function để đánh dấu các từ sai và hiển thị lỗi
+function highlightErrors(errors) {
+    var errorBox = document.getElementById('error-box');
+    var errorList = '';
 
-            // Hiển thị lỗi trong error-box bên phải
-            if (errors.length === 0) {
-                errorBox.innerHTML = '<div class="no-errors">Không có lỗi chính tả</div>';
-            } else {
-                errors.forEach((error) => {
-                    errorList += `<div>${error}</div>`;
-                });
-                errorBox.innerHTML = '<div class="has-errors">' + errorList + '</div>';
-            }
-        }
+    // Hiển thị lỗi trong error-box bên phải
+    if (errors.length === 0) {
+        errorBox.innerHTML = '<div class="no-errors">Không có lỗi chính tả</div>';
+    } else {
+        errors.forEach((error) => {
+            errorList += `<div>Lỗi chính tả: ${error}</div>`;  // Thêm chuỗi "Lỗi chính tả:" trước mỗi từ sai
+        });
+        errorBox.innerHTML = '<div class="has-errors">' + errorList + '</div>';
+    }
+}
 
         // Function to handle text submission
         function submitText() {

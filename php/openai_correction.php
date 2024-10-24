@@ -15,7 +15,7 @@ if (empty($text)) {
 $url = 'https://api.openai.com/v1/chat/completions';
 
 $data = [
-    'model' => 'gpt-4',
+    'model' => 'gpt-3.5-turbo',
     'messages' => [
         ['role' => 'system', 'content' => 'You are an assistant that corrects spelling and grammar mistakes in Vietnamese. Respond with the corrected text.'],
         ['role' => 'user', 'content' => $text],
