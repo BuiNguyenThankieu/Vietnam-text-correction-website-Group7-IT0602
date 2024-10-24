@@ -1,6 +1,6 @@
 <?php
 // API key cho OpenAI
-$api_key = 'YOUR_API_KEY_HERE';
+$api_key = '';
 
 // Lấy dữ liệu văn bản từ yêu cầu POST
 $text = $_POST['text'] ?? '';
@@ -17,7 +17,7 @@ $url = 'https://api.openai.com/v1/chat/completions';
 $data = [
     'model' => 'gpt-4',
     'messages' => [
-        ['role' => 'system', 'content' => 'You are an assistant that corrects spelling and grammar mistakes in Vietnamese. Respond with the corrected text and list of spelling errors.'],
+        ['role' => 'system', 'content' => 'You are an assistant that corrects spelling and grammar mistakes in Vietnamese. Respond with the corrected text.'],
         ['role' => 'user', 'content' => $text],
     ],
     'max_tokens' => 500,
