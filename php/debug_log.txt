@@ -1,30 +1,4 @@
-{
-  "id": "chatcmpl-AIsy80sfXTwbK0pdH4pOWbTocv6Py",
-  "object": "chat.completion",
-  "created": 1729064568,
-  "model": "gpt-3.5-turbo-0125",
-  "choices": [
-    {
-      "index": 0,
-      "message": {
-        "role": "assistant",
-        "content": "Xin chào! Bạn cần tôi giúp gì không?",
-        "refusal": null
-      },
-      "logprobs": null,
-      "finish_reason": "stop"
-    }
-  ],
-  "usage": {
-    "prompt_tokens": 12,
-    "completion_tokens": 20,
-    "total_tokens": 32,
-    "prompt_tokens_details": {
-      "cached_tokens": 0
-    },
-    "completion_tokens_details": {
-      "reasoning_tokens": 0
-    }
-  },
-  "system_fingerprint": null
-}
+PhoBERT Output: 
+Error: PhoBERT correction script did not return any output
+PhoBERT Output: 
+Error: PhoBERT correction script did not return any output
