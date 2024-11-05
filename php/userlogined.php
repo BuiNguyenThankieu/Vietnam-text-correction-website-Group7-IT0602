@@ -1,3 +1,10 @@
+<?php
+session_start();
+if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
+    header("Location: login.html");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -34,41 +41,87 @@
         .has-errors {
             color: red;
         }
+
+        /* Loading screen overlay */
+        #loading-screen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            text-align: center;
+        }
+
+        #loading-screen div {
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -60%);
+            color: white;
+        }
+
+        #loading-screen h2 {
+            margin-bottom: 70px;
+        }
+
+        /* Loading spinner */
+        .spinner {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #3498db;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 
 <body>
     <div class="header-top">
         <h1>Vietnamese Text Correction Website</h1>
-        <button onclick="window.location.href='index.html'">Logout</button>
+        <div class="user-info">
+            <span id="username-display" style="margin-right: 10px; font-weight: bold;">
+                Xin chào, <?php echo htmlspecialchars($_SESSION['username']); ?>
+            </span>
+            <button onclick="window.location.href='logout.php'">Logout</button>
+        </div>
+    </div>
+
+    <!-- Loading screen -->
+    <div id="loading-screen">
+        <div>
+            <h2>Đang xử lý, vui lòng chờ...</h2>
+            <div class="spinner"></div>
+        </div>
     </div>
 
     <div class="main-content">
         <div class="container">
             <div class="input-section">
                 <p>Text input:</p>
-
-                <!-- Trình soạn thảo văn bản -->
                 <div id="editor-container"></div>
-
                 <div class="btn-section">
-                    <input type="file" id="file-input" />
-                    <input type="submit" value="Upload" id="upload-btn" />
+                    <input type="file" id="file-input" accept=".txt" />
+                    <button id="upload-btn">Upload</button>
                     <button id="submit-btn">Submit</button>
                     <button id="download-btn" class="download-btn">Download</button>
                 </div>
             </div>
-
             <div class="output-section">
                 <textarea readonly id="corrected-text" placeholder="Corrected Text"></textarea>
             </div>
-
             <div class="footer"></div>
         </div>
-
-        <!-- Khung hiển thị lỗi chính tả thoát khỏi container -->
         <div class="error-box" id="error-box">
-            <!-- Hiển thị lỗi chính tả ở đây -->
+            <!-- Display spelling errors here -->
         </div>
     </div>
 
@@ -93,25 +146,22 @@
             submitText();
         });
 
-       // Function để đánh dấu các từ sai và hiển thị lỗi
-function highlightErrors(errors) {
-    var errorBox = document.getElementById('error-box');
-    var errorList = '';
+        function highlightErrors(errors) {
+            var errorBox = document.getElementById('error-box');
+            var errorList = '';
+            if (errors.length === 0) {
+                errorBox.innerHTML = '<div class="no-errors">Không có lỗi chính tả</div>';
+            } else {
+                errors.forEach((error) => {
+                    errorList += `<div>Lỗi chính tả: ${error}</div>`;
+                });
+                errorBox.innerHTML = '<div class="has-errors">' + errorList + '</div>';
+            }
+        }
 
-    // Hiển thị lỗi trong error-box bên phải
-    if (errors.length === 0) {
-        errorBox.innerHTML = '<div class="no-errors">Không có lỗi chính tả</div>';
-    } else {
-        errors.forEach((error) => {
-            errorList += `<div>Lỗi chính tả: ${error}</div>`;  // Thêm chuỗi "Lỗi chính tả:" trước mỗi từ sai
-        });
-        errorBox.innerHTML = '<div class="has-errors">' + errorList + '</div>';
-    }
-}
-
-        // Function to handle text submission
         function submitText() {
             var text = quill.getText().trim();
+            document.getElementById('loading-screen').style.display = 'block'; // Show loading screen
 
             fetch('../php/openai_correction.php', {
                 method: 'POST',
@@ -124,11 +174,12 @@ function highlightErrors(errors) {
             })
                 .then(response => response.json())
                 .then(data => {
+                    document.getElementById('loading-screen').style.display = 'none'; // Hide loading screen
+
                     if (data.choices) {
                         var correctedText = data.choices.trim();
                         document.getElementById('corrected-text').value = correctedText;
 
-                        // So sánh văn bản gốc với văn bản đã sửa để tìm các từ bị sai chính tả
                         var originalWords = text.split(/\s+/);
                         var correctedWords = correctedText.split(/\s+/);
                         var errors = [];
@@ -139,10 +190,8 @@ function highlightErrors(errors) {
                             }
                         }
 
-                        // Hiển thị các lỗi trong error-box
                         highlightErrors(errors);
 
-                        // Nếu không có lỗi thì thông báo văn bản chính xác
                         if (errors.length === 0) {
                             document.getElementById('corrected-text').value = 'Văn bản chính xác';
                         }
@@ -152,6 +201,7 @@ function highlightErrors(errors) {
                 })
                 .catch(error => {
                     console.error('Error:', error);
+                    document.getElementById('loading-screen').style.display = 'none'; // Hide loading screen
                     alert('An error occurred while trying to connect to the API.');
                 });
         }
@@ -163,15 +213,31 @@ function highlightErrors(errors) {
             if (file) {
                 var reader = new FileReader();
                 reader.onload = function (e) {
-                    quill.root.innerHTML = e.target.result;
+                    quill.root.innerText = e.target.result;
                 };
                 reader.readAsText(file);
             } else {
                 alert("No file selected.");
             }
         });
-    </script>
 
+        document.getElementById('download-btn').addEventListener('click', function () {
+            var correctedText = document.getElementById('corrected-text').value;
+            if (correctedText.trim() === "") {
+                alert("No corrected text to download.");
+                return;
+            }
+
+            var blob = new Blob([correctedText], { type: "text/plain;charset=utf-8" });
+            var link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "corrected_text.txt";
+            link.style.display = "none";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+    </script>
 </body>
 
 </html>

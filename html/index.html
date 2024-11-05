@@ -15,29 +15,30 @@
             <button onclick="window.location.href='signup.html'">Sign Up</button>
         </div>
     </div>
-
 </head>
 
 <body>
+    <!-- Màn hình chờ -->
+    <div id="loading-screen" style="display: none;">
+        <div>
+            <h2>Đang xử lý, vui lòng chờ...</h2>
+            <div class="spinner"></div>
+        </div>
+    </div>
 
     <!-- Nội dung chính của trang -->
     <div class="main-content">
         <div class="container">
             <div class="input-section">
                 <p>Text input: <span id="remaining-tries">5</span> times left</p>
-
-                <!-- Trình soạn thảo văn bản -->
                 <div id="editor-container"></div>
-
                 <div class="btn-section">
                     <button onclick="submitText()">Submit</button>
                 </div>
             </div>
-
             <div class="output-section">
                 <textarea readonly id="corrected-text" placeholder="Corrected Text"></textarea>
             </div>
-
             <div class="footer">
                 <p>Footer</p>
             </div>
@@ -46,6 +47,46 @@
 
     <!-- Quill JS -->
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <style>
+        /* Loading spinner */
+        .spinner {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #3498db;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Loading screen overlay */
+        #loading-screen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            text-align: center;
+        }
+
+        #loading-screen div {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+        }
+        #loading-screen h2 {
+            margin-bottom: 70px; /* Thêm khoảng cách giữa chữ và vòng tròn */
+        }
+    </style>
     <script>
         var quill = new Quill('#editor-container', {
             theme: 'snow', // Theme for the editor
@@ -64,18 +105,21 @@
         var maxEdits = 5;
         var maxWords = 200;
 
-        // Load number of remaining tries from localStorage
         function loadRemainingTries() {
+            let today = new Date().toDateString(); // Lấy ngày hiện tại
+            let savedDate = localStorage.getItem('savedDate');
             let tries = localStorage.getItem('remainingTries');
-            if (tries === null) {
-                tries = maxEdits;
+
+            if (savedDate !== today) {
+                tries = maxEdits; // Reset số lần thử
                 localStorage.setItem('remainingTries', tries);
+                localStorage.setItem('savedDate', today); // Cập nhật ngày mới
             }
+
             document.getElementById('remaining-tries').innerText = tries;
             return tries;
         }
 
-        // Decrease the remaining tries by 1 and save to localStorage
         function decrementTries() {
             let tries = loadRemainingTries();
             tries--;
@@ -84,12 +128,10 @@
             return tries;
         }
 
-        // Count the number of words in the input text
         function countWords(text) {
             return text.trim().split(/\s+/).length;
         }
 
-        // Submit the text to the API
         function submitText() {
             var text = quill.getText().trim(); // Get plain text
             if (countWords(text) > maxWords) {
@@ -103,7 +145,9 @@
                 return;
             }
 
-            // Gửi văn bản tới PHP để xử lý với OpenAI API
+            // Hiển thị màn hình chờ
+            document.getElementById('loading-screen').style.display = 'block';
+
             fetch('../php/openai_correction.php', {
                 method: 'POST',
                 headers: {
@@ -113,27 +157,30 @@
                     'text': text
                 })
             })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.choices) {
-                        document.getElementById('corrected-text').value = data.choices.trim();
-                        remainingTries = decrementTries(); // Decrease tries on successful submission
-                    } else {
-                        alert('There was an error with the correction.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred while trying to connect to the API.');
-                });
+            .then(response => response.json())
+            .then(data => {
+                // Ẩn màn hình chờ sau khi nhận được phản hồi
+                document.getElementById('loading-screen').style.display = 'none';
+
+                if (data.choices) {
+                    document.getElementById('corrected-text').value = data.choices.trim();
+                    decrementTries();
+                } else {
+                    alert('There was an error with the correction.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while trying to connect to the API.');
+                // Ẩn màn hình chờ khi có lỗi
+                document.getElementById('loading-screen').style.display = 'none';
+            });
         }
 
-        // Initialize the remaining tries when the page loads
         window.onload = function () {
             loadRemainingTries();
         }
     </script>
 
 </body>
-
 </html>

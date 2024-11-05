@@ -30,6 +30,14 @@
       </div>
    </div>
 
+   <script>
+      function login() {
+        // Giả sử bạn có logic kiểm tra đăng nhập ở đây
+        const username = document.getElementById('username').value; // Lấy tên người dùng từ ô nhập liệu
+        localStorage.setItem('username', username); // Lưu tên người dùng vào localStorage
+        window.location.href = 'userlogined.html'; // Chuyển hướng đến trang userlogined.html
+      }
+   </script>
 </body>
 
 </html>

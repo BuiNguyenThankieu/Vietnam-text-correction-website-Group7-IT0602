@@ -13,4 +13,6 @@ if ($conn->connect_error) {
 } else {
     
 }
+session_start(); // Bắt đầu session
+$_SESSION['username'] = $username; // $username là tên người dùng đăng nhập thành công
 ?>
