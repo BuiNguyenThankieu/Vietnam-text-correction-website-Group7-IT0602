@@ -118,7 +118,9 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
             <div class="output-section">
                 <textarea readonly id="corrected-text" placeholder="Corrected Text"></textarea>
             </div>
-            <div class="footer"></div>
+            <div class="footer">
+                <p>Group 7 Text Correction © 2024</p>
+            </div>
         </div>
         <div class="error-box" id="error-box">
             <!-- Display spelling errors here -->
