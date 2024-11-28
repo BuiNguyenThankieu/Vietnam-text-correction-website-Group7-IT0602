@@ -15,12 +15,12 @@ if (empty($text)) {
 $url = 'https://api.openai.com/v1/chat/completions';
 
 $data = [
-    'model' => 'ft:gpt-3.5-turbo-1106:personal::ASftixQ8', 
+    'model' => 'ft:gpt-3.5-turbo-1106:personal::ATJerxqE', 
     'messages' => [
         ['role' => 'system', 'content' => 'You are an assistant that corrects spelling and grammar mistakes in Vietnamese. Respond with the corrected text.'],
         ['role' => 'user', 'content' => $text],
     ],
-    'max_tokens' => 500,
+    'max_tokens' => 2000,
     'temperature' => 0.3,
 ];
 

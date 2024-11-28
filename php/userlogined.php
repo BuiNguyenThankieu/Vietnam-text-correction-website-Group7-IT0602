@@ -89,7 +89,7 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
         <h1>Vietnamese Text Correction Website</h1>
         <div class="user-info">
             <span id="username-display" style="margin-right: 10px; font-weight: bold;">
-                Xin chào, <?php echo htmlspecialchars($_SESSION['username']); ?>
+                Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?>
             </span>
             <button onclick="window.location.href='logout.php'">Logout</button>
         </div>
