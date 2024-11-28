@@ -98,7 +98,7 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     <!-- Loading screen -->
     <div id="loading-screen">
         <div>
-            <h2>Đang xử lý, vui lòng chờ...</h2>
+            <h2>Processing, please wait...</h2>
             <div class="spinner"></div>
         </div>
     </div>
@@ -152,10 +152,10 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
             var errorBox = document.getElementById('error-box');
             var errorList = '';
             if (errors.length === 0) {
-                errorBox.innerHTML = '<div class="no-errors">Không có lỗi chính tả</div>';
+                errorBox.innerHTML = '<div class="no-errors">There are no spelling errors</div>';
             } else {
                 errors.forEach((error) => {
-                    errorList += `<div>Lỗi chính tả: ${error}</div>`;
+                    errorList += `<div>Spelling error: ${error}</div>`;
                 });
                 errorBox.innerHTML = '<div class="has-errors">' + errorList + '</div>';
             }
