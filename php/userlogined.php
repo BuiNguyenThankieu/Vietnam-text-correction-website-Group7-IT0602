@@ -195,7 +195,7 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                         highlightErrors(errors);
 
                         if (errors.length === 0) {
-                            document.getElementById('corrected-text').value = 'Văn bản chính xác';
+                            document.getElementById('corrected-text').value = 'Exact text';
                         }
                     } else {
                         alert('There was an error with the correction.');
